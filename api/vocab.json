@@ -1,0 +1,726 @@
+{
+  "groups": [
+    {
+      "name": "智能体",
+      "note": "",
+      "terms": [
+        {
+          "name": "智能体系统",
+          "status": "未掌握",
+          "summary": "能够自己分步完成一个目标的程序。它查看当前情况，决定下一步，需要时使用工具，再根据结果继续，直到给出结果。",
+          "asked_at": "2026-10-25 00:43",
+          "concept": "一个智能体通常有三部分。大脑负责决定下一步，可以是写好的规则，也可以是大模型。工具是它能使用的外部能力，例如搜索、查询数据库、发送邮件。循环把「决定、执行、看结果」重复多次。多个智能体，加上对话记录、工具和给人使用的界面，合在一起就是智能体系统。LangChain 和 AutoGen 是用来搭建这种系统的两种框架。\n\n维基百科沿用 Russell 与 Norvig 的定义：智能体通过传感器感知环境，再通过执行器采取行动。理性智能体根据已经得到的感知、原有知识和可用动作，选择预期成绩更好的一步。Anthropic 在 2024 年的工程文章里把相关系统分成两类。工作流由事先写好的代码路径安排模型和工具。智能体由大模型自己决定过程和工具用法。文章建议把规划步骤展示出来，并把每个工具的说明写清楚。",
+          "problem": "只让模型一次写完一段文字，它不能查询此刻的价格，也不能在第一步失败之后再试下一步。许多任务要先获取事实，再采取动作。",
+          "scenario": "客服先查询订单再回答；编程助手先阅读代码再修改；研究助手先检索论文再写摘要。",
+          "example": "用户说「查一下这件商品还能不能买，能买就放进购物车」。系统第一步调用库存接口。库存足够时，第二步调用购物车接口。第三步把两步的结果写成一句回复。库存不足时，第二步不再加入购物车，而是告诉用户缺货。",
+          "sources": "维基百科 Intelligent agent：智能体通过传感器感知环境，通过执行器采取行动。https://en.wikipedia.org/wiki/Intelligent_agent\nAnthropic《Building effective agents》：工作流走事先写好的代码路径，智能体由模型动态决定过程和工具。https://www.anthropic.com/engineering/building-effective-agents",
+          "repo": "",
+          "related": "多轮对话、工具调用、任务编排"
+        },
+        {
+          "name": "多轮对话",
+          "status": "未掌握",
+          "summary": "用户和系统来回说话，后面每一轮都能用到前面说过的内容。",
+          "asked_at": "",
+          "concept": "一轮通常是用户说一次、系统回应一次。多轮对话把这些来回按时间顺序保存下来。后一轮做决定时，会读到前面的原话、查到的数据和已经给出的回答。如果只留下最后一句，系统就不知道「刚才」「这个」指的是什么。\n\n维基百科的 Dialogue system 条目把这类程序定义成能和人来回交谈的系统。系统要保存对话状态，后一句里的省略和指代才对得上前面出现过的对象。一次请求如果只带上最新的一句话，前面的城市、订单和已经查到的数字就接不上。",
+          "problem": "人说话经常省略前文。第二句往往依赖第一句里的人名、地点或数字。",
+          "scenario": "连续追问、客服处理同一张订单、在上一轮文案上继续修改。",
+          "example": "第一轮用户问「北京明天会下雨吗」，系统回答会下雨。第二轮用户说「那帮我把机票改到后天」。第二轮没有再说城市。系统要靠第一轮知道，改的是去北京的行程，而不是另一次无关的查询。",
+          "sources": "维基百科 Dialogue system：对话系统与人进行多轮交谈，并维护对话状态。https://en.wikipedia.org/wiki/Dialogue_system\n维基百科 Intelligent agent：后一次行动依据到目前为止的感知序列，多轮对话把前面的发言留在这个序列里。https://en.wikipedia.org/wiki/Intelligent_agent",
+          "repo": "",
+          "related": "智能体系统、工具调用"
+        },
+        {
+          "name": "工具调用",
+          "status": "未掌握",
+          "summary": "模型决定使用哪一个外部功能、传入什么参数；真正执行这个功能的是程序，执行完再把结果交回模型。",
+          "asked_at": "",
+          "concept": "工具是已经写好的函数或接口，例如查询天气、查询库存、发送邮件。模型在输出里写上工具名称和参数。程序看到后执行这个函数，把结果作为新的内容送回模型。模型再决定是继续使用别的工具，还是给出最终回答。OpenAI 和 Anthropic 的接口把这种能力叫做 tool use 或 function calling。\n\nOpenAI 的函数调用说明把分工写清楚。开发者先登记工具的名称、用途和参数格式。模型在需要外部信息时，输出要调用的工具和符合格式的参数。应用程序执行这个函数，再把结果作为新的消息送回模型。模型负责决定，程序负责执行。",
+          "problem": "模型不知道此刻的天气和库存，精确计算也不该只靠它猜测。这些事要交给专门的系统。",
+          "scenario": "查询实时数据、操作业务系统、阅读模型训练时没有见过的文件。",
+          "example": "用户问「上海现在气温多少」。模型输出调用 get_weather，参数是上海。程序去气象接口拿到 18 度，把这个数字交回模型。模型再回答「上海现在 18 度」。气温来自气象接口，不是模型凭记忆写出来的。",
+          "sources": "OpenAI Function calling：模型输出工具名称和参数，应用程序执行函数并回传结果。https://platform.openai.com/docs/guides/function-calling\n维基百科 Intelligent agent：执行器是智能体用来影响环境的部分，工具就是接在语言模型外面的执行器。https://en.wikipedia.org/wiki/Intelligent_agent",
+          "repo": "",
+          "related": "多轮对话、任务编排、LangChain"
+        },
+        {
+          "name": "任务编排",
+          "status": "未掌握",
+          "summary": "把一个目标排成有顺序的步骤，并规定每一步由谁完成、失败之后怎样继续。",
+          "asked_at": "",
+          "concept": "编排关心步骤之间的关系。可以先做 A 再做 B，可以 A 成功才做 B，也可以把几步同时交给不同的服务。LangChain 里的 LangGraph 用一张步骤图来写这种关系。AutoGen 则让多个角色靠互相发消息把步骤走完。\n\nAnthropic 把步骤已经由代码规定好的做法叫做工作流。步骤可以一个接一个，也可以几步同时进行，还可以在某一步的结果上改走另一条路径。模型在这种写法里填入每一步的内容，先后和分支由编排程序掌握。需要模型自己决定下一步时，才改用由模型主导的智能体。",
+          "problem": "一件事常常不是一次回答就能完成。步骤之间有条件，失败后也不能一律重来。",
+          "scenario": "先检索资料再写回答；先生成订单、再扣库存、再通知仓库；一个角色起草，另一个角色检查。",
+          "example": "退款被拆成四步：核对订单，检查是否已经发货，调用支付接口退款，给用户发送短信。如果状态是已签收，流程改走人工审核，不再自动退款。",
+          "sources": "Anthropic《Building effective agents》：工作流用预先写好的代码路径编排模型和工具，适合步骤可以事先定下来的任务。https://www.anthropic.com/engineering/building-effective-agents\n维基百科 Software framework：框架提供可复用的控制结构，业务步骤填进这个结构。https://en.wikipedia.org/wiki/Software_framework",
+          "repo": "",
+          "related": "智能体系统、LangChain、AutoGen"
+        },
+        {
+          "name": "框架",
+          "status": "未掌握",
+          "summary": "别人写好的程序骨架。开发者把自己的业务填进去，得到可以运行的应用。",
+          "asked_at": "",
+          "concept": "框架规定程序的主要结构和调用方式，例如消息怎样传递、工具怎样注册、失败后怎样重试。开发者不从空白文件开始写这些公共部分。和库的差别是：库由你的代码去调用；框架规定你的代码填在什么位置。做智能体时，常见的框架有 LangChain 和 AutoGen。\n\n维基百科把软件框架定义成可复用的程序骨架，并指出它的特点是控制反转：框架在约定的时机调用开发者填进去的代码。开发者注册工具、编写业务规则；消息怎样传递、失败后怎样重试，由框架掌握。换一个框架，通常是换这套调用约定，业务规则可以留下来改写接口。",
+          "problem": "每个项目都重写循环、重试和日志，既费时间，也容易写错。",
+          "scenario": "新项目要做对话、文档检索或智能体，希望把时间花在业务规则上。",
+          "example": "用一个智能体框架做客服。开发者注册「查询订单」这个工具，并选定一个对话模型。对话怎样保存、工具在什么时候执行，由框架处理。开发者主要编写退货规则和回答口吻。",
+          "sources": "维基百科 Software framework：框架是可复用骨架，并用控制反转在约定时机调用业务代码。https://en.wikipedia.org/wiki/Software_framework\nLangChain 官方概览：把模型、工具和检索做成可组合的零件，用来搭建大模型应用。https://docs.langchain.com/oss/python/langchain/overview",
+          "repo": "",
+          "related": "LangChain、AutoGen、LlamaIndex"
+        },
+        {
+          "name": "LangChain",
+          "status": "未掌握",
+          "summary": "用来把大模型、工具、对话记忆和文档检索拼成一个应用的 Python 框架。",
+          "asked_at": "2026-10-27 15:17",
+          "concept": "LangChain 把这些能力做成可以连接的零件。提示词、模型和工具遵守同一套调用方式，管道把左边的产出交给右边。官方快速入门用 `create_agent` 把模型、工具和系统提示装成一个智能体。下面先写本机就能跑通的三步，第 4 步再接上官方的智能体。前三步使用已经安装的 `langchain-core`。\n\n第 1 步，新建 `prompt_demo.py`，写一份带空位的提示词。花括号里的名字是空位，`invoke` 用同名字典键填上。\n\n```python\nfrom langchain_core.prompts import ChatPromptTemplate\n\nprompt = ChatPromptTemplate.from_messages([\n    (\"system\", \"你用两句话介绍{topic}。\"),\n    (\"human\", \"{question}\"),\n])\nfilled = prompt.invoke({\"topic\": \"Redis\", \"question\": \"键怎样过期？\"})\nprint(filled.messages[0].content)\nprint(filled.messages[1].content)\n```\n\n在仓库根目录执行 `.venv/bin/python prompt_demo.py`。输出两行：\n\n```text\n你用两句话介绍Redis。\n键怎样过期？\n```\n\n`system` 是交给模型的角色说明，`human` 是用户这句话。此时模型还没有生成新文字，打印出来的是填好空位之后的消息。\n\n第 2 步，用管道把填好的消息交给下一步。在同一文件里继续写：\n\n```python\nfrom langchain_core.runnables import RunnableLambda\n\ndef speak(prompt_value):\n    return prompt_value.messages[1].content\n\nchain = prompt | RunnableLambda(speak)\nprint(chain.invoke({\"topic\": \"Redis\", \"question\": \"键怎样过期？\"}))\n```\n\n竖线 `|` 是管道。左边 `invoke` 的结果原样交给右边。这里右边是本地函数，打印出来的是用户那一句「键怎样过期？」。接上对话模型时，把 `speak` 换成模型。\n\n第 3 步，用 `@tool` 把函数登记成工具。文档字符串会成为工具说明。\n\n```python\nfrom langchain_core.tools import tool\n\n@tool\ndef add_numbers(text: str) -> str:\n    \"\"\"把用逗号分开的数字相加。\"\"\"\n    total = sum(int(part) for part in text.split(\",\"))\n    return str(total)\n\nprint(add_numbers.name)\nprint(add_numbers.invoke({\"text\": \"12,30\"}))\n```\n\n输出是 `add_numbers` 和 `42`。`invoke` 执行这个函数本身。\n\n第 4 步，按官方快速入门把模型和工具装进智能体。先安装 `langchain`，并设置模型供应商的密钥。模型字符串按供应商填写，下面使用官方示例里的 `openai:gpt-5.5`。\n\n```python\nfrom langchain.agents import create_agent\n\ndef get_weather(city: str) -> str:\n    \"\"\"Get weather for a given city.\"\"\"\n    return f\"It's always sunny in {city}!\"\n\nagent = create_agent(\n    model=\"openai:gpt-5.5\",\n    tools=[get_weather],\n    system_prompt=\"You are a helpful assistant\",\n)\nresult = agent.invoke(\n    {\"messages\": [{\"role\": \"user\", \"content\": \"What's the weather in San Francisco?\"}]}\n)\nprint(result[\"messages\"][-1].content_blocks)\n```\n\n`create_agent` 接收模型、工具列表和系统提示。`invoke` 传入消息列表。函数的文档字符串进入模型看到的工具说明。",
+          "problem": "模型调用、工具执行、对话保存和文档查找如果各写一套，接口容易不一致。",
+          "scenario": "做一个能查文档、能使用工具、能记住上下文的助手。学习时先用本地函数看清管道送出了什么，再换成对话模型。",
+          "example": "按第 1 步调用后，两条消息是「你用两句话介绍Redis。」和「键怎样过期？」。第 2 步的管道打印用户那一句。第 3 步 `add_numbers.invoke({\"text\": \"12,30\"})` 返回 `42`。有模型密钥时，第 4 步的 `create_agent` 会在需要天气时调用 `get_weather`。",
+          "sources": "LangChain 官方概览：用可组合的模型、工具和检索零件搭建应用。https://docs.langchain.com/oss/python/langchain/overview\nLangChain 快速入门：`create_agent` 接收模型、工具和系统提示，再用 `invoke` 传入消息。https://docs.langchain.com/oss/python/langchain/quickstart",
+          "repo": "对话循环写在 `agent/loop.py`，由本仓库决定下一步并执行工具，没有调用 `create_agent`。学习页的 LangChain 实操调用 `agent/labs/langchain_lab.py`。三步分别填写 `ChatPromptTemplate`、用 `|` 接上 `RunnableLambda`、用 `@tool` 登记函数，由本机接口返回结果。依赖里安装的是 `langchain-core`。",
+          "related": "框架、工具调用、任务编排、LlamaIndex"
+        },
+        {
+          "name": "AutoGen",
+          "status": "未掌握",
+          "summary": "微软推出的框架，让多个智能体互相发送消息，分工完成同一个任务。",
+          "asked_at": "",
+          "concept": "每个智能体承担一个角色，例如提出方案的、编写代码的、检查结果的。任务通过它们之间的对话向前推进。一个角色可以调用工具，另一个角色只负责判断结果是否合格。这和只有一个角色、所有决定都由它做出的做法不同。\n\nWu 等人 2023 年的论文把 AutoGen 定义成开源的多智能体框架。智能体可以对话，也可以组合大模型、人的输入和工具。论文把这种写法叫做对话编程：计算是智能体为了做出回复而采取的动作，控制流是这些消息按什么条件发给谁。IBM 对较新版本的说明把它分成三层。Core 负责异步消息，AgentChat 提供现成的对话团队，Extensions 用来连接外部库。",
+          "problem": "有的任务适合拆开，让专门的角色互相核对，而不是把起草和检查交给同一次生成。",
+          "scenario": "编写一段程序并检查它能不能得到预期结果；一个角色检索资料，另一个角色写成报告。",
+          "example": "用户要求写一个计算折扣的函数。编写代码的智能体给出函数。检查的智能体用几组原价和折扣试算。结果不对时，它把错误发回编写代码的智能体，对方修改后再交回来。",
+          "sources": "AutoGen 论文：多个可对话智能体通过消息完成任务，控制流由对话推动。https://arxiv.org/abs/2308.08155\nIBM《AI Agent Frameworks》：较新的 AutoGen 分成 Core、AgentChat 和 Extensions 三层。https://www.ibm.com/think/insights/top-ai-agent-frameworks",
+          "repo": "",
+          "related": "框架、任务编排、智能体系统"
+        },
+        {
+          "name": "Skill",
+          "status": "未掌握",
+          "summary": "把一项反复要做的工作写成一个文件夹，里面是操作说明、脚本和参考资料，任务对上时再整份取用。",
+          "asked_at": "2026-10-27 15:17",
+          "concept": "这个用法来自 Anthropic 在 2025 年发布的 Agent Skills。一个 Skill 是一个目录，入口文件叫 `SKILL.md`。文件开头用 YAML 写出 `name` 和 `description`。启动时，智能体只把每个 Skill 的名称和描述放进上下文。描述对上当前任务后，再读入 `SKILL.md` 正文里的步骤。正文指向的附表和脚本，用到时才打开；脚本由程序执行，进入上下文的是运行结果。Anthropic 把这三层叫渐进式披露。Cursor 也使用同一套 `SKILL.md` 开头格式。\n\n下面按官方的文件结构，写一份可以放进技能目录的周报技能。\n\n第 1 步，新建目录和入口文件 `weekly-report/SKILL.md`。\n\n```markdown\n---\nname: weekly-report\ndescription: 把本周完成的事项写成周报。用户提到周报、本周总结或工作汇报时使用。\n---\n\n# 周报\n\n## 步骤\n\n1. 阅读用户给出的事项列表。\n2. 按「完成」「进行中」「下周」三节输出。\n3. 每节使用短句，保留用户给出的数字和日期。\n\n## 例子\n\n输入：完成了订单分页，进行中的是登录过期。\n输出分成三节。进行中那一节写登录过期。用户还没有给出下周事项时，下周那一节写「待补充」。\n```\n\n第 2 步，对照官方字段要求检查开头两行。`name` 由小写字母、数字和连字符组成，长度在 64 个字符以内。`description` 同时写清技能做什么、遇到哪类请求时使用，长度在 1024 个字符以内。智能体靠这段描述决定要不要读正文。\n\n第 3 步，正文只写这一项工作的步骤和例子。步骤要能照着执行。例子给出输入和对应的输出，方便对照格式。\n\n第 4 步，步骤变长时再加同目录的其他文件，并在正文里写明文件名。\n\n```text\nweekly-report/\n  SKILL.md\n  examples.md\n  scripts/build_report.py\n```\n\n`examples.md` 放更多对照样本。`scripts/build_report.py` 放固定的整理脚本。正文里写「样本见 examples.md，整理列表时运行 scripts/build_report.py」。任务只用到周报格式时，读取 `SKILL.md`。需要更多样本时再打开 `examples.md`。运行脚本之后，进入上下文的是脚本打印的结果。\n\n第 5 步，把目录放到会加载技能的位置。Claude Code 的个人技能放在 `~/.claude/skills/`，项目技能放在项目里的 `.claude/skills/`。放好之后，启动时的上下文里出现 `weekly-report` 和那段 description。用户说「帮我写本周周报，完成了订单分页，登录过期还在做」时，再读入正文，按三节写出周报。",
+          "problem": "把所有操作规程一次性写进提示词，上下文会被塞满，换一项任务时也难以只取出相关的那一套。Skill 把规程留在文件里，按任务加载。",
+          "scenario": "填写 PDF 表单、按固定格式写文档、按团队规范审查代码。同一套步骤会反复出现，而且人可以事先把做法写清楚。",
+          "example": "按上面写好 `weekly-report/SKILL.md` 后，启动时上下文里只有名称 `weekly-report` 和那句描述。用户要求写周报并给出「完成了订单分页，进行中的是登录过期」之后，智能体读入正文，输出完成、进行中、下周三节，下周一节写「待补充」。若正文指向 `scripts/build_report.py`，程序运行该脚本，上下文收到的是脚本输出。",
+          "sources": "Claude 文档 Agent Skills：`SKILL.md` 用 `name` 和 `description` 做启动信息，匹配后再读正文，脚本执行后只把结果放进上下文。https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview\nClaude Code 技能目录：个人技能放在 `~/.claude/skills/`，项目技能放在 `.claude/skills/`。https://code.claude.com/docs/en/skills\nAnthropic《Equipping agents for the real world with Agent Skills》：技能是含有说明、脚本和资料的目录，按需加载。https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills",
+          "repo": "",
+          "related": "CoT、提示词工程、工具调用、任务编排"
+        },
+        {
+          "name": "Harness",
+          "status": "未掌握",
+          "summary": "包在模型外面的那层程序。它保管状态、执行工具、把结果送回模型，并加上步数、权限和运行环境的约束。",
+          "asked_at": "2026-10-25 00:43",
+          "concept": "LangChain 的文章把关系写成 Agent = Model + Harness。模型提供推理，Harness 是模型以外的代码、配置和执行逻辑。维基百科也把 Agent harness 叫做 agent scaffolding，负责工具调度、记忆、状态保存、执行环境和反馈循环。Google Cloud 的说明把它定义成包住模型的运行环境：管理执行循环、状态、工具调用、记忆和安全边界。一次调用里，模型只根据眼前的文字生成下一段文字。多步任务的消息、工具结果和中途进度，由 Harness 保管。Harrison Chase 把零件级的抽象叫做框架，把带有默认提示、规划工具、文件系统和成套运行方式的成品叫做 Harness。Claude Code 和 Claude Agent SDK 是公开的例子：里面有现成工具、权限、会话和上下文管理。",
+          "problem": "模型本身不保存上一轮的工具结果，也不直接读写文件或调用接口。多步任务需要一层程序把决定变成动作，再把动作的结果变成下一轮输入。",
+          "scenario": "编程助手连续阅读和修改文件；客服先查订单再退款；长时间任务要在中途停下来，下次从进度记录接着做。",
+          "example": "用户要求修一个失败的测试。Harness 把目标和现有文件列表放进消息。模型决定读取测试输出。Harness 在允许的目录里执行读取，把输出追加进消息。模型再决定修改哪一个文件。Harness 检查这次修改是否得到许可，执行修改，把结果送回。测试通过后，模型给出最终说明，循环结束。",
+          "sources": "LangChain《The Anatomy of an Agent Harness》：Agent = Model + Harness，Harness 是模型以外的代码、配置和执行逻辑。https://www.langchain.com/blog/the-anatomy-of-an-agent-harness\n维基百科 Agent harness：模型外面的脚手架，负责工具、记忆、状态和执行环境。https://en.wikipedia.org/wiki/Agent_harness\nGoogle Cloud《What is an agent harness?》：管理执行循环、状态、工具调用、记忆和安全边界的运行环境。https://cloud.google.com/discover/agent-harness\nHarrison Chase《Agent Frameworks, Runtimes, and Harnesses》：框架提供抽象，Harness 带上默认提示、工具和运行环境。https://www.langchain.com/blog/agent-frameworks-runtimes-and-harnesses-oh-my",
+          "repo": "`Agent.run` 保存消息，最多循环 6 步。大脑做出决定，本地工具执行，结果写回消息，最后写入 `data/conversation.json`。",
+          "related": "智能体系统、工具调用、框架、Skill"
+        },
+        {
+          "name": "多智能体协作",
+          "status": "未掌握",
+          "summary": "多个智能体各自负责一块工作，通过消息、工具调用或固定工序把结果交给下一位，再合成最终回复。",
+          "asked_at": "2026-10-29 05:17",
+          "concept": "LangChain 的多智能体文档把合作写成几种固定机制。选择哪一种，取决于每个智能体能看到什么、结果交给谁。\n\n第一种是主管。一个主管智能体把专长智能体登记成工具。用户说「明天下午开会，并给参会人发提醒」时，主管调用日历智能体写入日程，再调用邮件智能体起草提醒。两个结果都回到主管，由主管合成一句回复。对话记忆保存在主管一侧。专长智能体一次调用使用单独的上下文，结束后把结果交回。LangChain 的个人助手教程用的就是日历智能体和邮件智能体。\n\n第二种是交接。OpenAI 的 Swarm 以及 AutoGen 的交接说明，都用一次特殊工具调用把控制权交给另一个智能体。工具名类似 `transfer_to_refund`。调用之后，状态里的当前智能体改成退款智能体，后续回复由退款智能体直接对用户说。分诊智能体负责判断该交给退款、销售还是人工。\n\n第三种是同一份消息记录里轮流发言。AutoGen 论文把控制流定义成消息按什么条件发给谁。编写代码的智能体把函数写进记录，检查的智能体读到记录后把试算错误写回去，编写代码的智能体再改。下一位发言的人由对话规则或管理者选出。\n\n第四种是固定工序。MetaGPT 把软件开发工序写进提示序列。产品经理根据需求写出需求文档，架构师把文档写成文件列表和接口，项目经理拆成任务，工程师编写对应的类和函数，测试工程师再写测试。每一步交出的是一份结构化产物，下一步只读上一步的产物。LangChain 把这种用代码规定顺序、中间某几步再交给智能体的做法称作自定义工序。\n\n第五种是路由器。路由器先阅读用户的话并完成分类，再把请求分给一位或几位专长智能体，最后把各方结果合成一句回复。分类这一步可以是模型调用，也可以是写好的规则。\n\n第六种是技能。控制权留在同一个智能体。需要某块专业知识时，再把对应的说明加载进当前上下文。日历、邮件、退款的长说明平时不放进提示，匹配到退款时再读入退款说明。\n\n实际动手时按这个顺序做。先给每位智能体写一段职责说明，并只配上它自己的工具。再决定下一位看到什么：主管模式把专长智能体的结果交回主管；交接模式把当前智能体的名字写进状态，下一句由那位直接对用户说；固定工序把上一步的文档交给下一步。工具数量少、说明短时，用一个智能体完成。工具变多、每块专业知识很长、或者要同时处理几块工作时，再拆成多个智能体。LangChain 的选择表把并行和大段上下文放在子智能体与路由器，把直接对用户继续说话放在交接和技能。",
+          "problem": "一个智能体同时掌握日历、邮件、退款和写代码时，工具和说明会堆在同一次上下文里，选错工具的机会变多。把工具和说明按职责拆开，每位只看到自己那一块。",
+          "scenario": "客服先分诊再交给退款或销售；助手同时改日程和发邮件；软件任务按需求、设计、编码、测试的顺序传递。",
+          "example": "用户说「订单 456 我要退款」。分诊智能体调用 `transfer_to_refund`，当前智能体变为退款智能体。退款智能体读取订单 456 的记录，把「已提交退款」写进对话。若用户同时说「把会议改到三点并发邮件」，主管在同一轮分别调用日历智能体和邮件智能体，再把两份结果合成一句回复。\n\n```python\ndef transfer_to_refund():\n    \"\"\"把当前对话交给退款智能体。\"\"\"\n    return \"refund\"\n\ndef refund_agent(request: str) -> str:\n    \"\"\"处理退款。输入是用户的退款说明，返回处理结果。\"\"\"\n    return \"订单 456 已提交退款\"\n```\n\n交接时，程序根据 `transfer_to_refund` 的返回值把当前智能体设为 `refund`。主管模式里，`refund_agent` 被主管当作工具调用，返回的文字回到主管，再由主管回复用户。",
+          "sources": "LangChain 多智能体文档：主管把子智能体当作工具调用，交接用工具调用更新当前智能体，路由器先分类再分发。https://docs.langchain.com/oss/python/langchain/multi-agent\nLangChain 子智能体文档：路由都经过主管，子智能体把结果交回主管，主管可以在一轮里调用多个子智能体。https://docs.langchain.com/oss/python/langchain/multi-agent/subagents\nLangChain 交接文档：工具调用更新 `active_agent` 这类状态，随后由另一位智能体继续。这个名称来自 OpenAI 的 Swarm。https://docs.langchain.com/oss/python/langchain/multi-agent/handoffs\nAutoGen 交接说明：用一次特殊工具调用把任务委托给其他智能体。客服例子包含分诊、退款、销售和人工。https://microsoft.github.io/autogen/stable/user-guide/core-user-guide/design-patterns/handoffs.html\nMetaGPT 论文：按软件开发工序传递需求文档、系统设计、任务、代码和测试。https://arxiv.org/abs/2308.00352",
+          "repo": "",
+          "related": "AutoGen、任务编排、工具调用、智能体系统"
+        }
+      ]
+    },
+    {
+      "name": "数据与服务",
+      "note": "",
+      "terms": [
+        {
+          "name": "LlamaIndex",
+          "status": "未掌握",
+          "summary": "把文档切成片段、建成可以搜索的索引。提问时先找出相关片段，再交给大模型生成回答。",
+          "asked_at": "",
+          "concept": "LlamaIndex 主要处理「模型没有读过这些文档」。它负责切分文本、建立索引、按问题检索。检索到的片段会放进发给模型的文字里。这种先检索、再生成的方法叫做 RAG。它可以单独做文档问答，也可以和 LangChain 一起使用。\n\nLlamaIndex 的文档把它定义成连接私有数据和大模型的框架。它负责加载文档、切成片段、建立索引，并在提问时检索相关片段。检索到的片段作为上下文交给模型生成回答。这和 RAG 论文里「外部索引加上生成模型」的分工一致，LlamaIndex 把这条路线做成可以调用的零件。",
+          "problem": "把整本手册放进一次请求会超出长度，也会混进大量无关段落。",
+          "scenario": "企业知识库、产品手册、法规和笔记的问答。",
+          "example": "员工问「试用期多长」。LlamaIndex 在员工手册的索引里找出「试用期为三个月」那一页，只把这一页交给模型。模型根据这一页回答三个月，而不是凭训练时的印象另编一个期限。",
+          "sources": "LlamaIndex 文档：加载、切分、索引和检索私有数据，再交给大模型生成回答。https://docs.llamaindex.ai/en/stable/\nLewis 等人 RAG 论文：用检索器从外部索引取出段落，再交给生成模型。https://arxiv.org/abs/2005.11401",
+          "repo": "",
+          "related": "RAG、提示词工程、大模型、LangChain"
+        },
+        {
+          "name": "RAG",
+          "status": "未掌握",
+          "summary": "检索增强生成。先从外部资料里找出和问题相关的几段文字，再把这几段和问题一起交给模型，由模型生成回答。",
+          "asked_at": "",
+          "concept": "这个名字来自 2020 年 Patrick Lewis 等人的论文 Retrieval-Augmented Generation。模型参数里记住的知识会过时，也不容易指出出处。RAG 在回答的时候另接一份可以更新的资料。论文里的做法，是用检索器从维基百科的索引中找出相关段落，再交给生成模型写答案。更新资料之后，模型能依据的事实就更新了，不必重新训练整个模型。\n\nLewis 等人把模型参数里记住的知识叫做参数记忆，把可以更新的外部索引叫做非参数记忆。论文用稠密检索从维基百科取出段落，再交给序列生成模型写答案。维基百科的 RAG 条目把这种方法概括为：回答时先检索外部知识，用来补充参数记忆里会过时、也难以指出出处的内容。资料更新后，替换或重建索引，生成模型可以沿用。",
+          "problem": "只靠模型记忆，它会把没见过的新规定说错，也无法给出原文在哪里。",
+          "scenario": "开放问答、客服依据最新手册回答、要求回答能对上出处的法律和医疗场景。",
+          "example": "问题是「某国现任领导人是谁」。检索器从维基百科取出最新词条里的相关段落。生成模型只根据这些段落作答，并附上段落来源。领导人更换后，更新维基百科索引即可，不必重新训练模型。",
+          "sources": "Lewis 等人，Retrieval-Augmented Generation：参数记忆加上维基百科一类的非参数索引。https://arxiv.org/abs/2005.11401\n维基百科 Retrieval-augmented generation：生成前先检索外部知识。https://en.wikipedia.org/wiki/Retrieval-augmented_generation",
+          "repo": "",
+          "related": "LlamaIndex、提示词工程、Elasticsearch、大模型"
+        },
+        {
+          "name": "提示词工程",
+          "status": "未掌握",
+          "summary": "设计发给大模型的那段文字，让它按指定的角色、步骤和格式完成任务。这段文字叫做提示词。",
+          "asked_at": "",
+          "concept": "提示词里可以写身份、任务、限制、做好的例子和参考资料。同一个模型，提示词不同，输出会差很多。提示词工程不修改模型参数。微调节的是另一件事：微调更新模型权重，提示词只改变这一次请求带进去的文字。\n\n维基百科把提示词工程定义为设计输入文字，用来引导模型产生期望的输出，模型权重保持不变。DAIR.AI 的 Prompt Engineering Guide 把常见写法分成几类。零样本只写下任务。少样本先给出几道带答案的例题。思维链要求先写出中间步骤。Brown 等人的 GPT-3 论文展示了少样本提示可以在一次请求里完成多种任务，训练好的参数不用为每个任务再更新一遍。",
+          "problem": "不写清格式和限制时，模型可能闲聊、漏掉步骤，或用程序无法解析的格式回答。",
+          "scenario": "要求只输出 JSON、先列出步骤再给结论、只根据给定资料回答、按固定模板写邮件。",
+          "example": "提示词写「你是客服。只根据下面的退货规则回答。规则里没有的，就说需要人工处理。」后面附上三条退货规则。用户问「穿过的衣服能退吗」。模型按这三条规则回答，而不是自己发明一条退货政策。",
+          "sources": "维基百科 Prompt engineering：通过设计输入来引导输出，不改模型权重。https://en.wikipedia.org/wiki/Prompt_engineering\nDAIR.AI Prompt Engineering Guide：零样本、少样本和思维链是常见写法。https://www.promptingguide.ai/\nBrown 等人 GPT-3 论文：少样本提示在不更新权重的情况下完成多种任务。https://arxiv.org/abs/2005.14165",
+          "repo": "",
+          "related": "RAG、大模型、工具调用、指令微调"
+        },
+        {
+          "name": "vLLM",
+          "status": "未掌握",
+          "summary": "一个高吞吐的大模型服务程序。它把模型放到显卡上，同时处理很多请求，并返回生成的文字。",
+          "asked_at": "",
+          "concept": "vLLM 由加州大学伯克利分校的团队发表。模型每生成一个新词，都要记住前面内容的中间结果，这份显存叫做 KV cache。请求有长有短。如果给每条请求预留一整块连续显存，很多空间会空着。vLLM 的 PagedAttention 借鉴操作系统的分页：把这些中间结果切成固定大小的块，用多少分配多少。论文报告，在相近的延迟下，吞吐可以达到当时常见系统的 2 到 4 倍。对外它提供和常见对话接口相近的 HTTP 服务，例如 /chat/completions。\n\nKwon 等人的 PagedAttention 论文发表于 SOSP 2023。它把每条请求的 KV cache 切成固定大小的块，像操作系统给内存分页，用多少分配多少。论文报告，在相近延迟下，吞吐可以达到当时常见系统的 2 到 4 倍。vLLM 文档提供与 OpenAI 对话接口相近的 HTTP 服务，调用方把请求发到这个服务，由它在显卡上完成生成。",
+          "problem": "模型文件本身不接收网络请求。很多人同时提问时，显存浪费会让能同时服务的人数变少。",
+          "scenario": "把一个开源模型部署成网上的对话服务，供很多用户同时使用。",
+          "example": "公司把一个开源对话模型交给 vLLM，在有显卡的机器上启动服务。网站和内部工具都把请求发到这个服务。一百个人同时提问时，vLLM 按块安排显存，而不是为每条请求占住一块用不满的大内存。",
+          "sources": "Kwon 等人，Efficient Memory Management for Large Language Model Serving with PagedAttention：用分页管理 KV cache，吞吐约为主流系统的 2 到 4 倍。https://arxiv.org/abs/2309.06180\nvLLM 文档：把模型运行为可调用的服务。https://docs.vllm.ai/",
+          "repo": "",
+          "related": "大模型、指令微调"
+        },
+        {
+          "name": "大模型",
+          "status": "未掌握",
+          "summary": "参数量很大的语言模型。它根据前面的文字预测后面的文字，因此能回答问题、写文章、按格式输出。",
+          "asked_at": "",
+          "concept": "参数是模型里可以调整的数字，数量常常达到数十亿甚至更多。训练时它阅读大量文本，学会词语怎样接下去。使用时给它一段前文，它继续生成后文。ChatGPT 这类产品，以及 Llama 这类开源模型，都是大模型。它能处理各种说法的自然语言。训练数据里没有的最新事实，它可能说错。需要实时数据时，要配上工具调用或 RAG。\n\n维基百科把大语言模型定义为用大量文本训练、参数规模大到能完成多种语言任务的模型。Brown 等人 2020 年发布的 GPT-3 有 1750 亿参数。论文说明，模型变大之后，给出少量例题就能做此前常要专门训练的任务。参数里的知识停在训练数据覆盖的时间。训练之后发生的事实，要靠工具调用或 RAG 从外部取回。",
+          "problem": "人用不同句子问同一件事时，很难把所有说法都写成固定规则。",
+          "scenario": "对话、摘要、翻译、编写代码、判断要不要去查询一个外部系统。",
+          "example": "用户用口语问「这件衣服换个大一号的还有吗」。大模型读懂这是在问相邻尺码的库存，然后可以输出一次库存查询。用户不必先改成一条固定格式的命令。",
+          "sources": "维基百科 Large language model：用大规模文本训练、能完成多种语言任务的模型。https://en.wikipedia.org/wiki/Large_language_model\nBrown 等人 GPT-3 论文：1750 亿参数的模型可以用少样本提示完成多种任务。https://arxiv.org/abs/2005.14165",
+          "repo": "",
+          "related": "指令微调、vLLM、SFT"
+        },
+        {
+          "name": "大模型 API",
+          "status": "未掌握",
+          "summary": "调用方用一次 HTTP 请求把对话发给模型服务，服务在自己的机器上生成下一条文字，再把文字和用量返回。",
+          "asked_at": "2026-10-29 05:34",
+          "concept": "模型权重留在服务方。调用方发送文字，取回生成结果。一次调用是向固定地址发送 POST，正文是 JSON。OpenAI 的对话接口地址是 `https://api.openai.com/v1/chat/completions`。请求头用 `Authorization: Bearer` 带上密钥，并用 `Content-Type: application/json`。正文里的 `model` 指定用哪一个模型，`messages` 是按顺序排列的消息，每条有 `role` 和 `content`。\n\n请求按下面的形状发送。`model` 填写服务方提供的模型名，这里用本仓库的默认值 `gpt-4o-mini`。密钥放在环境变量里，写进请求头。\n\n```bash\ncurl https://api.openai.com/v1/chat/completions \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: Bearer $OPENAI_API_KEY\" \\\n  -d '{\n    \"model\": \"gpt-4o-mini\",\n    \"messages\": [\n      {\"role\": \"user\", \"content\": \"这件衣服换个大一号的还有吗\"}\n    ]\n  }'\n```\n\n返回的 JSON 里，助手文字在 `choices[0].message.content`，角色是 `assistant`。`finish_reason` 为 `stop` 时，生成在自然结束处停下；为 `length` 时，停在请求允许的长度上；为 `tool_calls` 时，模型要求调用工具。`usage` 里的 `prompt_tokens` 是输入占用的词元数，`completion_tokens` 是生成占用的词元数，`total_tokens` 是两者相加。\n\nAnthropic 的 Messages 接口地址是 `https://api.anthropic.com/v1/messages`。请求头使用 `x-api-key` 和 `anthropic-version`。正文要求带 `max_tokens`。返回的文字在 `content` 数组里，类型为 `text` 的那一项的 `text` 字段。`stop_reason` 为 `end_turn` 表示这一轮结束。用量字段是 `input_tokens` 和 `output_tokens`。\n\n多轮对话由调用方保管。Anthropic 文档写明 Messages 接口是无状态的：每一次请求都带上到目前为止的全部消息。用户追问时，程序把上一轮助手的回复追加进 `messages`，再发送下一次 POST。服务方按这一次收到的列表生成下一条。\n\n```json\n{\n  \"model\": \"claude-opus-5-5\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\"role\": \"user\", \"content\": \"这件衣服换个大一号的还有吗\"},\n    {\"role\": \"assistant\", \"content\": \"大一号还有货。\"},\n    {\"role\": \"user\", \"content\": \"那帮我留一件\"}\n  ]\n}\n```",
+          "problem": "模型太大，调用方的电脑放不下整份权重，也无需为每个程序单独准备显卡。大家把同一份模型服务当成接口来用。",
+          "scenario": "网站把用户的问题发给对话接口，取回回答再显示；编程助手把仓库说明和用户要求放进 `messages`，取回下一步决定；计费时读取 `usage` 里的词元数。",
+          "example": "程序问「这件衣服换个大一号的还有吗」。它把这句话放进 `messages`，POST 到 `/v1/chat/completions`。返回的 `choices[0].message.content` 是「大一号还有货。」用户接着说「那帮我留一件」时，程序把上一轮助手回复和这句新话一起放进 `messages`，再 POST 一次。第二次返回的文字才是针对留货的回答。",
+          "sources": "OpenAI Chat Completions：用消息列表生成下一条回复，请求头使用 Bearer 密钥，返回含 `choices` 和 `usage`。https://developers.openai.com/api/reference/resources/chat\nAnthropic Messages：POST `/v1/messages`，用 `x-api-key` 调用，返回的文字在 `content`，用量是 `input_tokens` 与 `output_tokens`。https://platform.claude.com/docs/en/build-with-claude/working-with-messages\nAnthropic 多轮说明：Messages 接口无状态，每一次请求都发送到目前为止的全部消息。https://platform.claude.com/docs/en/build-with-claude/working-with-messages",
+          "repo": "`ModelBrain.complete` 把地址拼成 `{base_url}/chat/completions`，默认 `base_url` 是 `https://api.openai.com/v1`。请求头带 `Authorization: Bearer` 和 JSON 类型。正文是 `model`、`messages` 和 `temperature: 0.4`。返回后读取 `choices[0].message.content`。密钥来自环境变量 `AIAPP_API_KEY`，模型名来自 `AIAPP_MODEL`。",
+          "related": "大模型、vLLM、提示词工程、工具调用"
+        }
+      ]
+    },
+    {
+      "name": "训练",
+      "note": "",
+      "terms": [
+        {
+          "name": "指令微调（SFT）",
+          "status": "未掌握",
+          "summary": "在已经预训练好的模型上，用「一条指令配上希望它给出的回答」作为样本继续训练，让它更按人的要求行动。这种做法叫监督微调，英文缩写 SFT。",
+          "asked_at": "",
+          "concept": "预训练让模型学会把文字接下去，但不保证它会遵守「用三点回答」「遇到做不到的请求就拒绝」这类要求。指令微调再给它大量这种配对样本。OpenAI 在 InstructGPT 的说明里，把这一步描述为用人工写的示范做监督训练。训练之后，模型更常按指令回答，而不是只把用户的话续写一遍。\n\n指令微调是目标，SFT 是达到这个目标最常用的做法。SFT 的英文是 Supervised Fine-Tuning，一条样本既有输入，也有人写好的输出，训练目标是提高模型生成这段输出的可能性。InstructGPT 把对齐训练分成三步：第一步用标注员写的示范做 SFT，第二步请人比较几份回答、训练一个打分模型，第三步再用强化学习按这个分数调整。招聘里写「指令微调（SFT）」，就是把要达到的效果和训练方式放在一起说。\n\nWei 等人的 FLAN 把许多任务都写成自然语言指令，在预训练模型上继续微调，使模型面对没有专门训练过的指令也能按要求完成。Ouyang 等人的 InstructGPT 用标注员写出的示范做这一步，让模型更常遵守用户的格式和要求。预训练仍然负责学会语言怎样接下去，指令微调负责把这种能力收成对指令的回答。",
+          "problem": "只做预训练的模型，可能把问题再写一遍，或者回答得很散，不稳定地遵守格式。",
+          "scenario": "做一个会按机构口吻回答的客服模型；让模型稳定输出某种固定格式。",
+          "example": "样本的指令是「用一句话总结下面的公告」，标准回答是一句 30 字以内的摘要。用成千上万条这样的样本继续训练之后，模型见到新公告，更常给出短摘要，而不是把公告扩写得很长。另一种常见样本是：输入一段会议记录，输出标注员写好的三条待办。",
+          "sources": "Wei 等人 FLAN：用自然语言指令微调预训练模型，使它能完成未见过的指令。https://arxiv.org/abs/2109.01652\nOuyang 等人 InstructGPT：用人工示范做监督训练，让模型按指令回答。https://arxiv.org/abs/2203.02155",
+          "repo": "",
+          "related": "PEFT、LoRA、QLoRA、微调接口、验证集、大模型"
+        },
+        {
+          "name": "LoRA",
+          "status": "未掌握",
+          "summary": "一种省显存的微调方法。原来的模型权重保持冻结，只在旁边训练一小块新参数。",
+          "asked_at": "",
+          "concept": "LoRA 的英文是 Low-Rank Adaptation，由 Hu 等人提出。全量微调要更新模型的全部权重，显存和要保存的文件都很大。LoRA 不改原来的权重，而是学习一个较小的增量，通常是原矩阵旁边的两个小矩阵。训练只更新这两个小矩阵。换一个任务时，可以换上另一块小矩阵，原来的大模型继续共用。使用时也可以把小矩阵合并回原模型。\n\nHu 等人以 GPT-3 的 1750 亿参数为例。原权重保持冻结，只在 Transformer 的部分矩阵旁训练两个低秩小矩阵。和用 Adam 做全量微调相比，可训练参数大约减少到一万分之一，训练占用的显存大约降到三分之一。论文中的一种设置是秩为 4，并且只改查询和值的投影，一份任务增量大约 35MB，整份模型检查点大约 350GB。换任务时替换这块增量，基座模型继续留在显存里。",
+          "problem": "每做一个新任务就保存一整份大模型，存储和训练费用都太高。",
+          "scenario": "让同一个基座模型分别适应客服口吻、代码格式或某种行业用语。",
+          "example": "基座模型已经会对话。为了让它按医院的问诊格式回复，只训练一块小得多的 LoRA，原有的大量参数保持不动。另一块 LoRA 负责法律咨询的格式。两块可以切换，不必保存两份完整的大模型。",
+          "sources": "Hu 等人 LoRA 论文：冻结原权重，训练低秩矩阵；GPT-3 175B 上可训练参数约减少到万分之一，显存约降到三分之一。https://arxiv.org/abs/2106.09685",
+          "repo": "",
+          "related": "QLoRA、SFT、指令微调"
+        },
+        {
+          "name": "QLoRA",
+          "status": "未掌握",
+          "summary": "先把冻结的原模型压到更低的精度，再在上面做 LoRA。这样较小的显存也能微调较大的模型。",
+          "asked_at": "",
+          "concept": "QLoRA 由 Dettmers 等人提出。量化是用更少的比特保存每个参数，例如从 16 比特降到 4 比特。模型占用的显存会下降。QLoRA 把原模型量化之后冻结，新增的 LoRA 小矩阵仍用较高精度训练。论文说明，这样可以在较少的显卡上微调此前放不下的大模型。\n\nDettmers 等人把冻结的基座量化成 4 比特的 NormalFloat，简称 NF4，再把量化用的常数再压缩一次，并用分页优化器接住长序列带来的显存尖峰。论文写明，这样可以把 650 亿参数的模型放在一块 48GB 显卡上微调。全精度微调这块模型需要的显存超过 780GB，QLoRA 把它降到 48GB 以下。他们用这种方法训练的 Guanaco，在一块显卡上训练约 24 小时后，于 Vicuna 评测上达到 ChatGPT 成绩的 99.3%。",
+          "problem": "即使只训练一小块 LoRA，光是把完整的高精度模型载入显存，一张显卡也放不下。",
+          "scenario": "只有一张容量有限的显卡，仍然希望微调一个较大的开源模型。",
+          "example": "一个较大的模型用 16 比特加载，超过了手头这张显卡的容量。改成 4 比特加载后可以放进去。再训练一块 LoRA，让它学会某种客服话术。原模型的高精度副本不必整份留在显存里。",
+          "sources": "Dettmers 等人 QLoRA 论文：4 比特 NF4、双重量化和分页优化器，使 65B 模型能在一块 48GB 显卡上微调。https://arxiv.org/abs/2305.14314\nHu 等人 LoRA 论文：QLoRA 训练的新增部分仍然是低秩小矩阵。https://arxiv.org/abs/2106.09685",
+          "repo": "",
+          "related": "LoRA、SFT、指令微调"
+        },
+        {
+          "name": "微调接口",
+          "status": "未掌握",
+          "summary": "模型厂商提供的训练入口。上传指令和标准回答之后，厂商更新模型，并返回一个新的模型编号。",
+          "asked_at": "",
+          "concept": "调用方不自己准备显卡和训练代码。厂商按上传的样本做微调，常见做法是 SFT 或 LoRA。训练结束后，对话的调用方式不变，只是请求里的模型名字换成新编号。OpenAI 的 fine-tuning 接口就是这种入口：上传 JSONL 格式的样本，得到一个 ft: 开头的模型名，之后仍用原来的对话接口调用它。\n\nOpenAI 的微调指南把样本写成 JSONL。每一行是一条对话，里面有用户消息和期望的助手回答。厂商用这些样本更新模型，训练结束后返回一个新的模型名，常见前缀是 ft:。之后的调用仍走原来的对话接口，请求里更换的是模型名。调用方提交的是标好的对话，显卡、训练循环和权重文件由厂商保管。",
+          "problem": "自己搭建训练环境、下载权重和编写训练程序的门槛高。",
+          "scenario": "已经有几十到几千条标好的行业问答，希望模型更贴近这些回答。",
+          "example": "一家票务公司上传 500 条样本，每条都是用户询问退票规则，以及公司写好的标准答复。接口返回模型编号 ft:ticket。客服系统把原来的通用模型名换成这个编号，用户再问退票时，回答更常按公司规则给出。",
+          "sources": "OpenAI Fine-tuning：上传 JSONL 对话样本，得到新的模型名，之后仍用对话接口调用。https://platform.openai.com/docs/guides/fine-tuning\nOuyang 等人 InstructGPT：监督微调使用「指令，期望回答」这样的配对。https://arxiv.org/abs/2203.02155",
+          "repo": "",
+          "related": "指令微调、SFT、大模型、提示词工程"
+        },
+        {
+          "name": "PEFT",
+          "status": "未掌握",
+          "summary": "参数高效微调。原模型的大部分权重保持冻结，只训练新增的一小块参数。Hugging Face 的 peft 库把这类方法收成统一接口。",
+          "asked_at": "2026-10-29 05:56",
+          "concept": "PEFT 的英文是 Parameter-Efficient Fine-Tuning。全量微调要更新全部权重，显存和保存下来的文件都很大。PEFT 只训练旁边新增的参数。库里包含 LoRA、Prefix Tuning、P-Tuning、IA3 等方法。使用时先写一份配置，再交给 `get_peft_model`，包到 Transformers 已经加载好的模型上。\n\n官方快速入门用 `meta-llama/Llama-3.2-1B`，只在 `q_proj` 上训练秩为 8 的 LoRA。文档写出的可训练参数是 524,288，全部参数是 1,236,338,688，可训练比例是 0.0424%。训练循环可以交给 Transformers 的 `Trainer`。\n\n```python\nfrom peft import LoraConfig, TaskType, get_peft_model\nfrom transformers import AutoModelForCausalLM\n\nmodel = AutoModelForCausalLM.from_pretrained(\"meta-llama/Llama-3.2-1B\")\npeft_config = LoraConfig(\n    target_modules=[\"q_proj\"],\n    task_type=TaskType.CAUSAL_LM,\n    r=8,\n    lora_alpha=32,\n    lora_dropout=0.1,\n)\npeft_model = get_peft_model(model, peft_config)\npeft_model.print_trainable_parameters()\n```",
+          "problem": "每做一个新任务就更新并保存一整份大模型，显存和磁盘都承担不起。",
+          "scenario": "在已经会对话的开源模型上，为客服话术或行业格式再训练一块小参数，并和 Transformers 的训练循环接在一起。",
+          "example": "客服项目加载 Llama-3.2-1B，用上面的 `LoraConfig` 包成可训练模型。`print_trainable_parameters()` 显示大约 0.0424% 的参数参与更新。训练结束后保存的是这块适配器，基座模型继续留在原来的位置。",
+          "sources": "Hugging Face PEFT 快速入门：用配置指定要训练的层，再由 `get_peft_model` 包到基座模型上。Llama-3.2-1B 示例的可训练比例是 0.0424%。https://huggingface.co/docs/peft/quicktour\nHugging Face PEFT 文档：参数高效微调方法的统一库。https://huggingface.co/docs/peft/index",
+          "repo": "",
+          "related": "LoRA、QLoRA、Transformers、SFT"
+        },
+        {
+          "name": "Transformers",
+          "status": "未掌握",
+          "summary": "Hugging Face 的模型库。它负责按名字下载预训练模型、把文字切成词元，并用 `Trainer` 跑训练和验证。",
+          "asked_at": "2026-10-29 05:56",
+          "concept": "`AutoModelForCausalLM.from_pretrained` 按模型名取出权重。分词器把文字切成模型能接收的词元。`Trainer` 读取 `TrainingArguments`，在训练集上计算损失并更新权重。提供了验证集、并且 `eval_strategy` 写成 `epoch` 时，每一轮训练结束后在验证集上再计算一次。`load_best_model_at_end` 为 `True` 时，训练结束留下验证表现最好的那一版权重。\n\nPEFT 的快速入门把训练参数写成这样，再把模型、训练集和验证集交给 `Trainer`，调用 `train()` 开始。\n\n```python\nfrom transformers import TrainingArguments\n\ntraining_args = TrainingArguments(\n    output_dir=\"my-llama3.2-adapter\",\n    learning_rate=1e-3,\n    per_device_train_batch_size=32,\n    per_device_eval_batch_size=32,\n    num_train_epochs=2,\n    eval_strategy=\"epoch\",\n    save_strategy=\"epoch\",\n    load_best_model_at_end=True,\n)\n```\n\nLLaMA-Factory 和 SWIFT 加载的模型，也使用这套由 Transformers 定义的模型格式。PEFT 包上去的是这里加载出来的模型。",
+          "problem": "每种开源模型各有一套读取权重和分词的代码，训练循环也要各自重写。",
+          "scenario": "自己编写微调脚本时加载基座模型；给 PEFT 提供要包住的模型；在训练集上更新权重，并在每一轮结束后查看验证集。",
+          "example": "脚本先用 `from_pretrained` 加载 Llama-3.2-1B，再用 PEFT 包上 LoRA。`TrainingArguments` 把学习率写成 `1e-3`，把训练轮数写成 2，并把 `eval_strategy` 写成 `epoch`。两轮都结束后，留下验证表现最好的那一版适配器。",
+          "sources": "Hugging Face Transformers 文档：下载、加载和训练预训练模型。https://huggingface.co/docs/transformers/index\nHugging Face PEFT 快速入门：用 `TrainingArguments` 设置学习率、轮数和 `eval_strategy=\"epoch\"`，再交给 `Trainer`。https://huggingface.co/docs/peft/quicktour",
+          "repo": "",
+          "related": "PEFT、验证集、SFT、大模型"
+        },
+        {
+          "name": "LLaMA-Factory",
+          "status": "未掌握",
+          "summary": "把模型名、微调方法、数据集和训练轮数写进一份配置，再用一条命令开始监督微调的训练框架。",
+          "asked_at": "2026-10-29 05:56",
+          "concept": "仓库名是 hiyouga/LLaMA-Factory。它兼容 Hugging Face 的模型格式。监督微调时，命令读取一份 YAML。文档中的示例命令是：\n\n```bash\nllamafactory-cli train examples/train_lora/qwen3_lora_sft.yaml\n```\n\n示例配置指定模型 `Qwen/Qwen3-4B-Instruct-2507`，`stage` 写成 `sft`，`finetuning_type` 写成 `lora`，`lora_rank` 写成 8，`lora_target` 写成 `all`。`stage` 还可以写成 `pt`、`dpo` 等，分别对应预训练和偏好训练。`do_train` 为 `true` 时执行训练。\n\n```yaml\nmodel_name_or_path: Qwen/Qwen3-4B-Instruct-2507\nstage: sft\ndo_train: true\nfinetuning_type: lora\nlora_rank: 8\nlora_target: all\ndataset: identity,alpaca_en_demo\ntemplate: qwen3_nothink\noutput_dir: saves/qwen3-4b/lora/sft\nlearning_rate: 1.0e-4\nnum_train_epochs: 3.0\nval_size: 0.1\neval_strategy: steps\neval_steps: 500\n```\n\n文档的示例文件把 `val_size`、`eval_strategy` 和 `eval_steps` 放在评估参数的位置。写上这些值之后，训练过程会按步在划出的验证部分上计算。",
+          "problem": "直接编写 Transformers 和 PEFT 的脚本时，模型名、数据集模板、LoRA 秩和保存目录都要自己接上。",
+          "scenario": "已经准备好指令和标准回答，希望用 LoRA 对 Qwen 一类开源模型做监督微调，并用一份配置看清训练和验证参数。",
+          "example": "配置沿用上面的字段，数据集写成自己的客服问答。执行 `llamafactory-cli train` 之后，适配器写入 `saves/qwen3-4b/lora/sft`。`eval_steps` 为 500 时，每 500 步在验证部分上计算一次。",
+          "sources": "LLaMA-Factory 监督微调文档：用 `llamafactory-cli train` 读取 YAML，示例模型是 Qwen3-4B-Instruct-2507，`stage` 为 `sft`，`finetuning_type` 为 `lora`。https://llamafactory.readthedocs.io/en/latest/getting_started/sft.html\nLLaMA-Factory 仓库：兼容 Hugging Face 模型格式的训练框架。https://github.com/hiyouga/LLaMA-Factory",
+          "repo": "",
+          "related": "SFT、LoRA、Transformers、PEFT、SWIFT、验证集"
+        },
+        {
+          "name": "SWIFT",
+          "status": "未掌握",
+          "summary": "魔搭社区的大模型微调框架。全称是 Scalable lightWeight Infrastructure for Fine-Tuning，安装包名是 ms-swift，招聘里常写成 Swift。",
+          "asked_at": "2026-10-29 05:56",
+          "concept": "你写下的 swsft，按这个项目收录。命令 `swift sft` 做监督微调。同一套框架还支持预训练、偏好学习，以及 GRPO 一类强化学习。文档写明 `tuner_backend` 可选 `peft` 和 `unsloth`，默认是 `peft`。`tuner_type` 默认是 `lora`，也可以写成 `full` 做全量微调。模型默认从 ModelScope 下载，改用 Hugging Face 时加上 `--use_hf true`。\n\n官方快速开始在一张 3090 上用 LoRA 微调 `Qwen/Qwen3-4B-Instruct-2507`，说明大约占用 13GB。主要参数如下。\n\n```bash\nCUDA_VISIBLE_DEVICES=0 \\\nswift sft \\\n    --model Qwen/Qwen3-4B-Instruct-2507 \\\n    --tuner_type lora \\\n    --dataset 'AI-ModelScope/alpaca-gpt4-data-zh#500' \\\n    --torch_dtype bfloat16 \\\n    --num_train_epochs 1 \\\n    --lora_rank 8 \\\n    --lora_alpha 32 \\\n    --target_modules all-linear \\\n    --eval_steps 50 \\\n    --output_dir output\n```\n\n`split_dataset_ratio` 用来从训练集划出验证集。文档写明默认值是 0，训练使用全部已给样本更新权重。写成 `0.1` 时划出一部分作为验证集。也可以用 `--val_dataset` 单独指定验证集。",
+          "problem": "希望用一条命令完成开源模型的监督微调，并直接使用 PEFT 里的 LoRA，同时还能换到全量微调或偏好训练。",
+          "scenario": "在魔搭上下载 Qwen 一类模型，用中文指令数据做 LoRA 监督微调，并按步查看验证结果。",
+          "example": "按上面的命令训练一轮。`--lora_rank 8` 和 `--lora_alpha 32` 决定新增小矩阵的规模。`--eval_steps 50` 表示每 50 步做一次评估。权重写入 `output`。",
+          "sources": "ms-swift 仓库：魔搭的训练、推理、评估和部署框架，快速开始用 `swift sft` 和 LoRA 微调 Qwen3-4B-Instruct-2507。https://github.com/modelscope/ms-swift\nSWIFT 论文：兼容 Transformers，并集成 PEFT，支持预训练、微调和人类对齐。https://arxiv.org/abs/2408.05517\n命令行参数文档：`tuner_backend` 默认 `peft`，`tuner_type` 默认 `lora`，`split_dataset_ratio` 默认 0。https://swift.readthedocs.io/en/latest/Instruction/Command-line-parameters.html",
+          "repo": "",
+          "related": "PEFT、LoRA、SFT、LLaMA-Factory、Transformers、验证集"
+        },
+        {
+          "name": "验证集",
+          "status": "未掌握",
+          "summary": "从标好的样本里留出的一部分。训练时用它计算损失或分数，这一步不更新权重。",
+          "asked_at": "2026-10-29 05:56",
+          "concept": "标好的样本分成训练集和验证集。训练集上的样本用来计算损失并更新权重。验证集上的样本用来观察模型在这批留出样本上的损失或分数，权重在这一步保持原样。维基百科把这三份数据分别称为训练集、验证集和测试集：验证集在调整模型和选择检查点时使用，测试集留到训练结束之后做最终测量。\n\nTransformers 的 `Trainer` 在提供了 `eval_dataset`、并且 `eval_strategy` 写成 `epoch` 时，每一轮训练结束后在验证集上计算一次。`load_best_model_at_end` 为 `True` 时，留下验证表现最好的检查点。\n\nLLaMA-Factory 的监督微调文档在评估参数处写出 `val_size: 0.1`、`eval_strategy: steps` 和 `eval_steps: 500`。写上这些值之后，训练按步在划出的验证部分上计算。\n\nSWIFT 用 `split_dataset_ratio` 从训练集划出验证集，文档写明默认值是 0。写成 `0.1` 时划出一部分。`--val_dataset` 用来单独指定一份验证数据。`--eval_steps 50` 表示每 50 步计算一次。",
+          "problem": "只看训练集上的损失时，损失下降可能只说明模型记住了训练样本，看不出留出样本上的表现。",
+          "scenario": "微调客服问答时留出一成问答，每若干步查看验证损失，并保留验证表现最好的检查点。",
+          "example": "1000 条客服问答里，900 条进入训练集，100 条进入验证集。每一轮结束后，`Trainer` 在这 100 条上计算损失。两轮都结束后，留下验证损失更低的那一版适配器。",
+          "sources": "维基百科 Training, validation, and test data sets：验证集用于调整模型和选择检查点，测试集用于训练结束后的最终测量。https://en.wikipedia.org/wiki/Training,_validation,_and_test_sets\nHugging Face PEFT 快速入门：`eval_strategy=\"epoch\"` 与 `load_best_model_at_end=True`。https://huggingface.co/docs/peft/quicktour\nLLaMA-Factory 监督微调文档：评估参数包含 `val_size`、`eval_strategy` 和 `eval_steps`。https://llamafactory.readthedocs.io/en/latest/getting_started/sft.html\nSWIFT 命令行参数：`split_dataset_ratio` 是从训练集划出验证集的比例，默认 0。https://swift.readthedocs.io/en/latest/Instruction/Command-line-parameters.html",
+          "repo": "",
+          "related": "SFT、Transformers、LLaMA-Factory、SWIFT"
+        }
+      ]
+    },
+    {
+      "name": "数据库",
+      "note": "招聘原句：对非关系型数据库如 Elasticsearch、HBase、MongoDB、时序数据库等有实际开发经验。\n这句话要求候选人在真实项目里写过这些数据库的业务代码。冒号后面是例子，「等」表示同一类数据库也算。要先看懂关系型数据库，才能看懂「非关系型」。",
+      "terms": [
+        {
+          "name": "关系型数据库",
+          "status": "未掌握",
+          "summary": "把数据放进表里。表有固定的列，行与行、表与表用键关联。查询语言通常是 SQL。",
+          "asked_at": "",
+          "concept": "一张表像一张事先规定好栏目的表格。用户表的列可以是编号、姓名、手机，每一行是一名用户。订单表用「用户编号」指向用户表里的某一行，这就是关联。MySQL 和 PostgreSQL 是常见产品。它适合结构稳定、而且相关数据必须一起保持正确的业务，例如扣款和记账要同时成功或同时失败。\n\n维基百科把关系数据库定义为按照关系模型组织的数据库。数据放在表中，一行是一条记录，一列是一种属性，表与表通过键关联。E. F. Codd 在 1970 年提出这套模型。相关的几笔更新常用 ACID 事务收在一起：它们一起成功，或者一起回到更新之前，避免账只改了一半。MySQL 和 PostgreSQL 都提供 SQL 和这种事务。",
+          "problem": "数据之间有明确关系，查询时要把多张表对上，更新时不能只改其中一张而留下矛盾。",
+          "scenario": "账户、订单、库存、学生选课。",
+          "example": "查询「张三的全部订单」。用户表里张三的编号是 7。订单表里所有用户编号等于 7 的行，就是他的订单。SQL 用 JOIN 按这个编号把两张表连起来。",
+          "sources": "维基百科 Relational database：数据按关系模型放进表，行与列用键关联。https://en.wikipedia.org/wiki/Relational_database\n维基百科 ACID：事务要求相关更新一起成功或一起撤销。https://en.wikipedia.org/wiki/ACID",
+          "repo": "",
+          "related": "非关系型数据库、数据库开发经验"
+        },
+        {
+          "name": "非关系型数据库",
+          "status": "未掌握",
+          "summary": "不按固定的表和表间关联来组织数据的数据库统称，也叫 NoSQL。具体形态取决于数据怎样写入、怎样读取。",
+          "asked_at": "",
+          "concept": "常见的四种是：文档数据库，一条记录是一份类似 JSON 的文档，例如 MongoDB；宽列数据库，按行键存放超大的表，例如 HBase；搜索引擎，按词找文档，例如 Elasticsearch；时序数据库，按时间存放测量值，例如 InfluxDB。它们弱化了表与表之间的复杂关联，换来灵活的字段、更大的规模，或按时间的高速写入。\n\n维基百科说明，NoSQL 这个名称常被解释成 not only SQL，也可以理解为非关系型。常见形态有键值、宽列、图和文档。一种系统通常用一种主要结构保存数据，同一类记录的字段可以不完全相同。很多系统把数据分到多台机器上横向扩展。维基百科同时写明，MongoDB 等系统后来也提供多文档事务，组织方式灵活和保持一组更新同时成功可以同时存在。",
+          "problem": "不是所有数据都适合先设计死固定的列，再在多张表之间做关联。",
+          "scenario": "字段经常变化的业务对象、全文搜索、行数极大的历史记录、每秒大量传感器数据。",
+          "example": "一条商品评价里有文字、图片列表和可有可无的视频。文档数据库可以把整份评价一次写入。如果还要按评价里的词语搜索，再把文字放进 Elasticsearch。两种数据库各负责一种读法。",
+          "sources": "维基百科 NoSQL：用键值、宽列、图或文档保存数据，字段不必先收成固定的表。https://en.wikipedia.org/wiki/NoSQL\nMongoDB 官方介绍：文档数据库用文档保存记录，文档可以嵌套。https://www.mongodb.com/docs/manual/introduction/",
+          "repo": "",
+          "related": "关系型数据库、MongoDB、HBase、Elasticsearch、时序数据库"
+        },
+        {
+          "name": "Elasticsearch",
+          "status": "未掌握",
+          "summary": "用来做全文检索的分布式搜索引擎。文本被切成词，并记下每个词出现在哪些文档里。",
+          "asked_at": "",
+          "concept": "这种「词指向文档列表」的结构叫做倒排索引。查询一个词时，直接找到包含它的文档，不必把所有文档读一遍。Elasticsearch 基于 Apache Lucene，也常用来查询日志和做统计。官方拼写是 Elasticsearch，有人写成 ElasticSearch，指的是同一个产品。\n\n维基百科和 Elastic 官方都写明，Elasticsearch 建立在 Apache Lucene 之上，是分布式的搜索和分析引擎。数据以 JSON 文档保存，文本通过倒排索引按词查找。它常与 Logstash、Kibana 一起用来收集和查看日志，这套组合被叫做 Elastic Stack。官网把全文检索、日志和指标分析列成它的典型用途。",
+          "problem": "普通数据库索引擅长按编号查找一行，不擅长在很长的文字里找几个词。",
+          "scenario": "网站里的商品搜索、日志平台、在大量文章里找关键词。",
+          "example": "商城里有一百万条商品标题。用户搜索「红色 跑鞋」。Elasticsearch 从倒排索引里找出同时包含这两个词的商品，并按相关程度排序返回。",
+          "sources": "Elastic 官方产品页：分布式搜索和分析引擎，基于 Lucene，使用 JSON 文档。https://www.elastic.co/elasticsearch\n维基百科 Elasticsearch：用倒排索引做全文检索，并可分布到多台机器。https://en.wikipedia.org/wiki/Elasticsearch",
+          "repo": "",
+          "related": "非关系型数据库、MongoDB"
+        },
+        {
+          "name": "HBase",
+          "status": "未掌握",
+          "summary": "建在 Hadoop 上的宽列数据库。数据按行键排序，凭行键读取一行或其中几列。",
+          "asked_at": "",
+          "concept": "HBase 的设计对应 Google 的 Bigtable 论文。一行可以有很多列，没有内容的列不必占同样的位置。它适合行数极大、读取时主要凭一个键取出数据的场景。跨很多行做复杂关联和事务，通常仍交给关系型数据库。\n\nApache HBase 手册说明，它是按照 Google Bigtable 设计的分布式数据库，数据放在 Hadoop 的文件系统上。一行由行键定位，列分成列族，没有内容的列不必占同样的位置。Google 对 Bigtable 的说明也指出，HBase 受到这篇论文的启发。典型读法是拿着行键取出一行，或者扫描一段连续的行键。",
+          "problem": "行数大到一台普通关系数据库难以承载，而读取方式又比较简单：拿着一个键取这一行。",
+          "scenario": "海量历史记录、网页库、按用户编号取出他的行为记录。",
+          "example": "每一行的行键是「用户编号加时间」，列里存放访问的页面和停留秒数。已知某个用户在某个时间的行键时，一次取出这一行。要计算所有用户的平均停留时间，这种跨所有行的统计不是 HBase 的典型用法。",
+          "sources": "Apache HBase 手册：按 Bigtable 设计的分布式宽表，数据存放在 HDFS。https://hbase.apache.org/book.html\nGoogle Bigtable 论文页面：HBase 所依据的宽表设计。https://research.google/pubs/pub27898/",
+          "repo": "",
+          "related": "非关系型数据库、时序数据库"
+        },
+        {
+          "name": "MongoDB",
+          "status": "未掌握",
+          "summary": "文档数据库。一条记录是一份类似 JSON 的文档，放在集合里。同一个集合里的文档可以有不同字段。",
+          "asked_at": "",
+          "concept": "集合大致对应别的系统里的表，但没有要求每条文档的字段完全相同。文档里面可以嵌套数组和对象。整份对象可以一次写入、一次读出。官方拼写是 MongoDB。\n\nMongoDB 官方介绍把它定义成面向文档的数据库，用来降低应用开发和横向扩展的难度。一条记录是一份文档，文档放在集合里，里面可以嵌套数组和对象。文档在磁盘上使用 BSON，也就是 JSON 的二进制形式，驱动程序负责在程序里的对象和文档之间转换。维基百科的 NoSQL 条目把这种形态归在文档数据库一类。",
+          "problem": "一条业务数据本身就是嵌套的。拆成很多张表再关联，读写都会变繁琐。后来增加字段时，也不想先改一整张表的结构。",
+          "scenario": "商品详情、一篇文章及其评论、结构会随版本增加字段的记录。",
+          "example": "一条订单文档里直接包含商品数组，每个商品有名称、数量和单价。读取这张订单时，一次拿到全部商品。后来增加「发票邮箱」字段，新订单可以带上这个字段，旧订单没有这个字段也可以继续读取。",
+          "sources": "MongoDB 官方介绍：面向文档的数据库，记录可以嵌套，集合不必要求每条字段完全相同。https://www.mongodb.com/docs/manual/introduction/\n维基百科 NoSQL：文档数据库是 NoSQL 的一种形态。https://en.wikipedia.org/wiki/NoSQL",
+          "repo": "",
+          "related": "非关系型数据库、关系型数据库"
+        },
+        {
+          "name": "时序数据库",
+          "status": "未掌握",
+          "summary": "专门存放「某个时刻、某个指标、一个数值」的数据库。",
+          "asked_at": "",
+          "concept": "每条数据至少有时间、指标名称和数值，例如 10:01:00、CPU 使用率、63。查询几乎都是取出一段时间，再画成曲线或计算平均值。时序数据库按时间压缩和分区，也可以自动删除过期数据。常见产品有 InfluxDB、TimescaleDB 和 TDengine。订单、文章这种业务对象不是这种数据。\n\n维基百科把时序数据库定义为专门存放按时间排列的测量值的数据库。每条数据带有时间戳，查询多半取出一段时间，再做平均、求和或画成曲线。存储上按时间分区和压缩，并可以设置保留期限，到期删掉旧数据。订单和文章这种业务对象仍然放在关系型或文档数据库里，监控和传感器的连续读数才适合放进时序数据库。",
+          "problem": "用普通的表每秒写入大量监测点，并按时间范围做汇总，会又慢又占空间。",
+          "scenario": "服务器监控、传感器、股票行情、接口耗时。",
+          "example": "每台服务器每 10 秒上报一次 CPU。查询「过去 1 小时 3 号服务器的平均 CPU」时，数据库在这段时间和这台机器对应的数据里取值。超过 30 天的点按规则删除。",
+          "sources": "维基百科 Time series database：按时间存放测量值，支持按时间范围聚合和到期删除。https://en.wikipedia.org/wiki/Time_series_database\n维基百科 NoSQL：宽列和专门的时序系统常用来承接高频率写入的测量数据。https://en.wikipedia.org/wiki/NoSQL",
+          "repo": "",
+          "related": "非关系型数据库、HBase"
+        },
+        {
+          "name": "数据库开发经验",
+          "status": "未掌握",
+          "summary": "在真实项目里编写过使用这种数据库的业务代码，并处理过怎样存放、怎样查询、变慢了怎样办。",
+          "asked_at": "",
+          "concept": "招聘里的「实际开发经验」通常包括四件事。按业务选定表、文档、行键或时间粒度。编写写入和读取。为变慢的查询建立索引。处理连接失败和数据量变大。只听说过产品名字，或只在图形界面里打开看过数据，一般还不算这种经验。\n\nPostgreSQL 文档把索引说明为加速查找的结构。开发者观察真实查询用哪些列做筛选，再为这些列建立索引。MongoDB 的介绍则要求按应用程序怎样读写来设计文档，一份经常一起读取的数据可以放在同一条文档里。招聘里的实际开发经验，就是在项目里完成这种存放设计、写出读写、在变慢之后补上索引，并能讲清数据变多以后发生了什么。",
+          "problem": "招聘要区分「知道这个数据库叫什么」和「独立做过一个功能」。",
+          "scenario": "在简历和面试里说明一个真实功能：数据为什么这样存放，查询怎样写，上线之后出过什么问题。",
+          "example": "做一个订单查询。开发者把订单存进 MongoDB，按订单号读取整份文档，并给订单号建立索引。订单变多之后，按用户查询变慢，又给用户编号补了索引。能讲清这个过程，就是在说明文档数据库的开发经验。",
+          "sources": "PostgreSQL 索引文档：索引用来加速查询，建在真正参与筛选的列上。https://www.postgresql.org/docs/current/indexes.html\nMongoDB 官方介绍：文档的形状按应用的读写方式设计。https://www.mongodb.com/docs/manual/introduction/",
+          "repo": "",
+          "related": "非关系型数据库、关系型数据库、MongoDB"
+        }
+      ]
+    },
+    {
+      "name": "中间件",
+      "note": "",
+      "terms": [
+        {
+          "name": "中间件",
+          "status": "未掌握",
+          "summary": "放在业务程序和操作系统、数据库之间的公共软件。业务程序通过它完成缓存、传递消息、转发请求或发现其他服务。",
+          "asked_at": "2026-10-25 16:05",
+          "concept": "维基百科把中间件定义为向应用程序提供操作系统本身不直接提供的那些服务的软件。它像一层胶水，让多个程序用统一的方式协作。招聘和架构说明里的主流中间件，通常按用途分成几类。缓存用 Redis，把经常读取的数据放在内存里。消息用 Kafka、RocketMQ 或 RabbitMQ，让发送方先把一件事交出去，接收方稍后处理。反向代理用 Nginx，把外部请求分给后面的多份业务程序。协调和配置用 ZooKeeper 或 etcd，让多台机器对「谁在服务、配置是什么」有同一份答案。检索用 Elasticsearch，按词查找文档。",
+          "problem": "每套业务都自己写缓存、重试、转发和广播，接口会各不相同，一台程序变慢时也会拖住调用它的人。",
+          "scenario": "网站要把热点页面从数据库前移一层；下单之后异步通知库存和短信；一台入口把流量分给多台应用服务器。",
+          "example": "用户打开商品页。应用先问 Redis 里有没有这份详情。有，就直接返回。没有，再查数据库，并把结果写入 Redis，设置几分钟后过期。用户下单成功后，应用把「订单已创建」交给消息队列。库存程序和短信程序各自取走这条消息，分别扣库存、发短信。用户不必等这两件事都做完才看到下单成功。",
+          "sources": "维基百科 Middleware：向应用程序提供操作系统不直接提供的服务。https://en.wikipedia.org/wiki/Middleware\n维基百科 Message-oriented middleware：程序通过传递消息来协作。https://en.wikipedia.org/wiki/Message-oriented_middleware\nRedis 项目说明：内存中的缓存、数据结构和消息能力。https://github.com/redis/redis\nNginx 项目说明：HTTP 服务器、反向代理和负载均衡。https://nginx.org/en/",
+          "repo": "",
+          "related": "Redis、消息队列、Elasticsearch、Nginx"
+        },
+        {
+          "name": "Redis",
+          "status": "未掌握",
+          "summary": "主要把数据放在内存里的数据结构服务器。读写很快，常用来做缓存、会话、计数和排行榜。",
+          "asked_at": "2026-10-25 16:05",
+          "concept": "Redis 由 Salvatore Sanfilippo 在 2009 年发布。数据以键值存放，值可以是字符串、列表、集合、哈希或有序集合。因为数据主要在内存中，读写延迟常常低于一毫秒。键可以设置过期时间，到期后自动删除，所以缓存可以自己失效。下面按官方命令的顺序编写：先启动服务，再用字符串做缓存，用哈希做会话，用有序集合做排行榜，最后用 Python 客户端写同样的操作。\n\n第 1 步，用 Docker 启动 Redis，并把本机的 6379 端口接到容器。\n\n```bash\ndocker run --detach --name learn-redis --publish 6379:6379 redis:7\n```\n\n第 2 步，写入一条会过期的字符串。`SET` 保存键和值，`EX 300` 表示 300 秒后这个键过期。`GET` 读出值，`TTL` 返回剩余秒数。\n\n```bash\ndocker exec learn-redis redis-cli SET product:789 \"棉质衬衫\" EX 300\ndocker exec learn-redis redis-cli GET product:789\ndocker exec learn-redis redis-cli TTL product:789\n```\n\n`GET` 的结果是 `棉质衬衫`。`TTL` 的结果是一个不大于 300 的整数。详情修改后删除这个键，下一次读取再写入新内容：\n\n```bash\ndocker exec learn-redis redis-cli DEL product:789\n```\n\n第 3 步，用哈希保存一份登录会话。一个键下面可以有多个字段。`EXPIRE` 给整个键设置 1800 秒。\n\n```bash\ndocker exec learn-redis redis-cli HSET session:42 name \"任沛新\" minutes 30\ndocker exec learn-redis redis-cli EXPIRE session:42 1800\ndocker exec learn-redis redis-cli HGET session:42 name\ndocker exec learn-redis redis-cli HGETALL session:42\n```\n\n`HGET` 返回 `任沛新`。`HGETALL` 依次返回字段名和值：`name`、`任沛新`、`minutes`、`30`。\n\n第 4 步，用有序集合做排行榜。`ZADD` 写入成员和分数。`ZREVRANGE` 按分数从高到低取出一段，`0` 和 `2` 是起止下标，`WITHSCORES` 让结果带上分数。\n\n```bash\ndocker exec learn-redis redis-cli ZADD rank 120 user:1\ndocker exec learn-redis redis-cli ZADD rank 80 user:2\ndocker exec learn-redis redis-cli ZREVRANGE rank 0 2 WITHSCORES\n```\n\n结果里 `user:1` 在前，分数是 `120`；`user:2` 在后，分数是 `80`。\n\n第 5 步，用官方示例里的 Python 客户端 `redis-py` 写同样的缓存。先执行 `pip install redis`，并保持第 1 步的容器在运行。\n\n```python\nimport redis\n\nclient = redis.Redis(host=\"127.0.0.1\", port=6379, decode_responses=True)\nclient.set(\"product:789\", \"棉质衬衫\", ex=300)\nprint(client.get(\"product:789\"))\nprint(client.ttl(\"product:789\"))\n```\n\n`decode_responses=True` 让读出的值是字符串。`ex=300` 对应命令里的 `EX 300`。打印结果是 `棉质衬衫`，以及一个不大于 300 的剩余秒数。",
+          "problem": "同一份商品详情、登录状态每秒被读很多次。每次都查磁盘上的数据库，延迟和压力都会上去。",
+          "scenario": "商品详情和首页的热点缓存；把用户登录状态放在各台应用都能读到的地方；接口按用户编号计数，超过阈值就暂时拒绝。",
+          "example": "按第 2 步执行后，`GET product:789` 返回 `棉质衬衫`，`TTL` 返回不大于 300 的秒数。第 3 步 `HGET session:42 name` 返回 `任沛新`。第 4 步 `ZREVRANGE` 把 `user:1` 排在 `user:2` 前面。第 5 步的 Python 程序打印同样的商品名和剩余秒数。",
+          "sources": "Redis SET 命令：`SET key value EX seconds` 写入字符串并按秒设置过期时间，`GET` 读出该值。https://redis.io/docs/latest/commands/set/\nRedis HSET 命令：一个键下面写入多个字段。https://redis.io/docs/latest/commands/hset/\nRedis ZADD 命令：有序集合按分数保存成员。https://redis.io/docs/latest/commands/zadd/\nRedis 项目说明：内存缓存、数据结构服务器，支持过期键、会话、排行榜和消息。https://github.com/redis/redis",
+          "repo": "",
+          "related": "中间件、消息队列、关系型数据库"
+        },
+        {
+          "name": "消息队列",
+          "status": "未掌握",
+          "summary": "生产者把消息交给中间的代理，消费者稍后取走并处理。发送方不必等接收方同时在线。",
+          "asked_at": "2026-10-25 16:05",
+          "concept": "维基百科把这类软件叫做面向消息的中间件。消息先进入代理，接收方按自己的速度取用。一台接收方暂时停机，消息仍留在代理里。RabbitMQ 用交换机按规则把消息路由到队列，适合把一件任务分给多个工作者，并在处理失败后重试。Kafka 把消息追加进可以保留的日志，同一条消息可以按各自的阅读进度被多个程序读取，适合高吞吐的事件流。RocketMQ 由阿里巴巴在 2012 年开源，2016 年捐给 Apache，后来成为顶级项目。它由名称服务、代理、生产者和消费者组成，用于大规模交易里的可靠消息。",
+          "problem": "下单程序如果当场等待库存、短信和积分全部完成，其中一步变慢，用户就一直停在付款页。把这些后续动作变成消息，主流程可以先结束。",
+          "scenario": "订单创建后的扣库存、发短信、记积分；日志和点击流要送给多个分析程序；任务高峰时让工作者按自己的能力慢慢消化。",
+          "example": "用户付款成功。订单程序把一条「订单 456 已支付」发给 Kafka 的主题 `orders`。库存程序从自己的阅读位置取走这条消息并扣库存。积分程序从另一个阅读位置取走同一条消息并加积分。库存程序短暂停机时，消息仍留在日志里，恢复后从上次的位置继续。若用 RabbitMQ 做退款审核，审核任务进入队列，空闲的审核程序取走一件、做完再取下一件。",
+          "sources": "维基百科 Message-oriented middleware：程序通过消息代理异步协作。https://en.wikipedia.org/wiki/Message-oriented_middleware\n维基百科 Apache Kafka：分布式事件存储，消息保留在日志中，消费者按偏移读取。https://en.wikipedia.org/wiki/Apache_Kafka\n维基百科 RabbitMQ：实现 AMQP 的消息代理，用路由把消息交给队列。https://en.wikipedia.org/wiki/RabbitMQ\n维基百科 Apache RocketMQ：阿里巴巴开源并捐给 Apache 的分布式消息平台。https://en.wikipedia.org/wiki/Apache_RocketMQ",
+          "repo": "",
+          "related": "中间件、Redis、任务编排"
+        }
+      ]
+    },
+    {
+      "name": "部署",
+      "note": "",
+      "terms": [
+        {
+          "name": "RESTful API",
+          "status": "未掌握",
+          "summary": "一种网络接口风格。网址表示一份资源，HTTP 方法表示对它做什么。读取常用 GET，新建常用 POST，整体替换常用 PUT，删除常用 DELETE。内容常常是 JSON。",
+          "asked_at": "",
+          "concept": "REST 这个名字来自 Roy Fielding 的博士论文，英文是 Representational State Transfer，说的是在网络上传递一份资源的表示。资源是一个东西，例如一名顾客、一张订单。网址 /customers/1 表示编号为 1 的顾客。GET 这个网址，服务器返回这名顾客的 JSON。POST /customers 表示在顾客这个集合里新建一名。PUT /customers/1 表示用请求里的内容替换这名顾客。DELETE /customers/1 表示删除。网址用名词，动作放在 HTTP 方法上，所以不写成 /create-customer。Postman 和微软的接口说明都用商品、订单、顾客来讲这套约定。\n\nRoy Fielding 在 2000 年的博士论文里把 REST 定义成一种网络架构风格。资源用标识符定位，客户端通过统一接口取得或提交这份资源的表示。维基百科把它在 Web 上的常见做法概括为：网址表示资源，HTTP 方法表示动作。MDN 列出这些方法的含义：GET 读取，POST 提交新内容，PUT 替换，DELETE 删除。状态码用来表示结果，例如创建成功常用 201。",
+          "problem": "两个程序交换数据时，如果每个接口都自己发明地址和动作名称，调用方就要逐个记住。REST 用统一的「资源 + 方法」，让读取、新建、修改、删除可以预测。",
+          "scenario": "手机应用向服务器要数据；网站的页面和服务器分开；一个服务调用另一个服务，例如订单服务向商品服务查询库存。",
+          "example": "查看全部商品是 GET /api/products。查看编号 789 的商品是 GET /api/products/789，服务器返回 JSON，里面有商品编号和名称。新建一张订单是 POST /api/orders，请求正文是 {\"product_id\":\"789\",\"quantity\":2}。创建成功时，服务器常常返回状态码 201。删除订单是 DELETE /api/orders/456。",
+          "sources": "Fielding 博士论文 REST 一章：资源、标识符和统一接口。https://www.ics.uci.edu/~fielding/pubs/dissertation/rest_arch_style.htm\n维基百科 Representational state transfer：网址表示资源，HTTP 方法表示动作。https://en.wikipedia.org/wiki/Representational_state_transfer\nMDN HTTP 请求方法：GET、POST、PUT、DELETE 的含义。https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods",
+          "repo": "",
+          "related": "云原生、Kubernetes、vLLM"
+        },
+        {
+          "name": "云原生",
+          "status": "未掌握",
+          "summary": "一种构造和运行软件的方法。程序拆成可以各自更新的小服务，连同运行环境打成容器，再按一份事先写好的要求，由平台自动启动、增加数量和换掉出故障的副本。",
+          "asked_at": "",
+          "concept": "云原生计算基金会（CNCF）的定义是：在公有云、私有云或混合云里，用可重复的方式构建和运行能够随访问量伸缩的应用。它不是「把原来的程序原样放到一台云服务器上」。放到云上的程序，仍然可以是一整块，仍然要人工登录机器去重启。云原生换的是做法，常见的四样是这些。容器：把程序和它依赖的库打成一个包，换一台机器也能同样运行。微服务：一个大程序拆成多个小服务，每个只做一件事，可以单独发布。声明式接口：人写出「支付服务要有 20 份」，平台负责达成，人不必到每台机器上敲启动命令。不可变基础设施：不在正在运行的旧副本上改来改去，要更新就换成一份新的容器。这些小服务通过网络接口互相调用。一个出了故障，其他的还可以继续。Kubernetes 是目前最常用的、用来安排这些容器的平台。Google Cloud 也强调：云原生说的是怎样构建和交付应用，不只是应用放在哪一家云上。\n\nCNCF 的定义文件写明：云原生技术帮助组织在公有云、私有云和混合云这类动态环境里构建和运行可扩展的应用。文件列出的代表技术包括容器、服务网格、微服务、不可变基础设施和声明式 API。Google Cloud 的说明强调，云原生指的是构建和交付应用的方式。CNCF 的京东案例记录了把应用放进容器、用 Kubernetes 管理，并以增加副本承受访问高峰的做法。",
+          "problem": "很多程序是一整块。改其中一项功能，就要重新发布整个程序。访问的人突然变多，只能把整台机器换得更大，或者人工再开几台并逐台安装。一台机器停了，相关功能可能一起停。云原生让每一项功能单独发布、单独增加份数。出故障的那一份，由平台按事先写好的要求再启动一份。",
+          "scenario": "访问量会突然升高的服务，例如购物节的下单；需要经常发布新版本、又不能整站停机的系统；一个产品要拆给不同小组各自开发和发布。",
+          "example": "一个网上商店原来把商品、购物车和支付写在同一个程序里。改成云原生之后，三部分各自成为一个服务，各自打成容器。平时支付服务运行 2 份。购物节下单变多，只把支付服务增加到 20 份，商品服务保持原来的份数。其中一份支付容器崩溃，平台再启动一份新的，顾客仍然从同一个地址付款。CNCF 记录的京东案例走的也是这条路：应用放进容器，用 Kubernetes 管理。发布一次应用的时间从数小时缩短到数十秒，并用增加副本的方式撑过双十一的访问高峰。",
+          "sources": "CNCF 云原生定义：在现代动态环境中用容器、微服务、不可变基础设施和声明式 API 构建可扩展应用。https://github.com/cncf/toc/blob/main/DEFINITION.md\nGoogle Cloud《What is cloud native?》：云原生是构建和交付应用的方式。https://cloud.google.com/learn/what-is-cloud-native\nCNCF 京东案例：用容器和 Kubernetes 管理大规模应用。https://www.cncf.io/case-studies/jd/",
+          "repo": "",
+          "related": "Kubernetes、vLLM、RESTful API"
+        },
+        {
+          "name": "Kubernetes",
+          "status": "未掌握",
+          "summary": "管理大量容器的平台。人写下要运行什么、要几份、从哪个地址访问，它把容器放到机器上，并在份数不够或容器停止时补上。",
+          "asked_at": "2026-10-27 03:00",
+          "concept": "Kubernetes 由 Google 内部管理集群的 Borg 系统发展而来，现在由 CNCF 维护。它管理的最小运行单位叫 Pod，一个 Pod 里通常运行一个容器。Deployment 是一份声明，写明这类 Pod 要保持几份。官方文档的例子是一个叫 nginx-deployment 的 Deployment，份数为 3，容器使用镜像 nginx:1.14.2。有 Pod 停止时，控制器再启动新的，直到份数回到 3。Service 是一个稳定的访问地址。Pod 自己的网络地址会变化，外面的程序只记录 Service 的地址，由它把请求分给正在运行并且已经就绪的 Pod。\n\n下面按官方入门的顺序编写。先确认集群，再把 Deployment 和 Service 两个文件写出来，用 kubectl apply 提交，然后改份数、改镜像。官方基础教程用命令创建，Deployment 文档用同一份 YAML。这里直接写 YAML，因为日常修改就是改文件再提交。\n\n第 1 步，准备 kubectl 和一个已经运行的集群。Docker Desktop 可以打开自带的 Kubernetes，也可以安装 minikube。下面两条都有输出，就可以往下写文件。\n\n```bash\nkubectl version\nkubectl get nodes\n```\n\n第 2 步，新建 nginx-deployment.yaml。字段和官方 Deployment 文档的例子一致。\n\n```yaml\napiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: nginx-deployment\n  labels:\n    app: nginx\nspec:\n  replicas: 3\n  selector:\n    matchLabels:\n      app: nginx\n  template:\n    metadata:\n      labels:\n        app: nginx\n    spec:\n      containers:\n      - name: nginx\n        image: nginx:1.14.2\n        ports:\n        - containerPort: 80\n```\n\n逐项对应关系：\n\napiVersion 和 kind 说明这份文件是一个 Deployment。apps/v1 是这种对象当前使用的接口版本。\n\nmetadata.name 是这份 Deployment 的名字。后面的命令都用 nginx-deployment 指它。\n\nspec.replicas 写成 3，表示要一直保持 3 个 Pod。实际数量少了，控制器再创建，直到回到 3。\n\nspec.selector.matchLabels 告诉控制器：带有 app: nginx 的 Pod 归这份 Deployment 管理。\n\nspec.template 是新建 Pod 的样板。template.metadata.labels 写成同一组 app: nginx。控制器靠这组标签把 Pod 和 Deployment 对上。\n\ncontainers 列出 Pod 里的容器。name 是容器在 Pod 内的名字。image 是镜像和标签。containerPort 记下容器里的进程监听 80，给阅读文件的人看。把流量送进来要再写 Service。\n\n第 3 步，把文件提交给集群，并查看结果。\n\n```bash\nkubectl apply -f nginx-deployment.yaml\nkubectl get deployments\nkubectl get pods\n```\n\napply 按文件创建或更新对象。get deployments 里 READY 变成 3/3 时，3 个 Pod 都已就绪。get pods 会列出 3 行，名字以 nginx-deployment- 开头，STATUS 为 Running。\n\n第 4 步，新建 nginx-service.yaml。selector 使用和 Pod 相同的标签。\n\n```yaml\napiVersion: v1\nkind: Service\nmetadata:\n  name: nginx\nspec:\n  selector:\n    app: nginx\n  ports:\n  - protocol: TCP\n    port: 80\n    targetPort: 80\n```\n\nport 是集群里访问这个 Service 时使用的端口。targetPort 是请求送到容器的端口，这里和 containerPort 一样写成 80。官方说明里，targetPort 省略时会采用和 port 相同的数字。selector 写成 app: nginx 之后，Service 只把流量分给带这个标签、并且已经就绪的 Pod。\n\n```bash\nkubectl apply -f nginx-service.yaml\nkubectl get service nginx\nkubectl port-forward service/nginx 8080:80\n```\n\nport-forward 把你电脑的 8080 转到 Service 的 80。浏览器打开 http://127.0.0.1:8080 ，看到 nginx 的欢迎页。这个命令会一直占着终端，看完后在该终端按 Ctrl+C 结束。\n\n第 5 步，改份数。把 nginx-deployment.yaml 里的 replicas 从 3 改成 5，再提交一次。\n\n```bash\nkubectl apply -f nginx-deployment.yaml\nkubectl get deployments\n```\n\nREADY 变为 5/5。平台按文件里的新数字补齐 Pod。\n\n第 6 步，换镜像，做滚动更新。把 image 从 nginx:1.14.2 改成 nginx:1.16.1，再 apply。官方文档也给出等价命令，容器名 nginx 对应 YAML 里的 containers.name。\n\n```bash\nkubectl apply -f nginx-deployment.yaml\nkubectl rollout status deployment/nginx-deployment\n```\n\n等价的命令行写法：\n\n```bash\nkubectl set image deployment/nginx-deployment nginx=nginx:1.16.1\n```\n\nrollout status 结束时，新 Pod 已经逐步替换旧 Pod。kubectl get pods 里的名字会换成新的一组。\n\n第 7 步，看自动补齐。从 kubectl get pods 抄一个 Pod 名字，删掉它。\n\n```bash\nkubectl delete pod nginx-deployment-这里换成真实名字\nkubectl get pods\n```\n\n列表里会再出现一个新的 Running Pod，READY 的 Deployment 仍是 5/5。份数写在文件里，控制器负责把运行中的数量维持在这个数字。",
+          "problem": "容器变多之后，要有人决定放在哪台机器、停止了由谁重启、外面用哪个地址访问。手工维护几十台机器上的几百个容器容易出错。",
+          "scenario": "同一个服务要在很多台机器上运行多份；发布新版本时一份一份替换；某个副本停止后，按声明里的份数再启动一份。本地学习时用 Docker Desktop 或 minikube，命令和上面相同。",
+          "example": "按上面两个文件提交之后，kubectl get deployments 显示 nginx-deployment 的 READY 为 3/3。kubectl port-forward service/nginx 8080:80 之后，浏览器打开本机 8080 能看到 nginx 欢迎页。把 replicas 改成 5 再 apply，READY 变为 5/5。把镜像改成 nginx:1.16.1 再 apply，rollout status 结束后，Pod 名字换成新的一组。删掉其中一个 Pod，控制器再启动一个，份数仍是 5。",
+          "sources": "Kubernetes 基础教程：用 kubectl 创建 Deployment，并查看节点和 Pod。https://kubernetes.io/docs/tutorials/kubernetes-basics/deploy-app/deploy-intro/\nKubernetes Deployment 文档：nginx-deployment 的完整 YAML、kubectl apply，以及把镜像改成 nginx:1.16.1。https://kubernetes.io/docs/concepts/workloads/controllers/deployment/\nKubernetes Service 文档：selector 选择 Pod，port 对应 targetPort。https://kubernetes.io/docs/concepts/services-networking/service/\nKubernetes 端口转发：kubectl port-forward 把本机端口接到 Service。https://kubernetes.io/docs/tasks/access-application-cluster/port-forward-access-application-cluster/",
+          "repo": "",
+          "related": "云原生、Docker、RESTful API、vLLM"
+        },
+        {
+          "name": "Docker",
+          "status": "未掌握",
+          "summary": "把程序和它依赖的库打成一份只读镜像，推到镜像仓库，再在服务器上用这份镜像启动容器。",
+          "asked_at": "2026-10-27 03:00",
+          "concept": "Docker 是一个开发、交付和运行应用的开放平台。官方文档把架构分成三块。Client 是你输入命令的一端，例如 docker build、docker pull、docker run。Docker Host 上的守护进程 dockerd 接收这些命令，管理本机的镜像和容器。Registry 是存放镜像的仓库，默认的公共仓库是 Docker Hub，公司也可以自建私有仓库。镜像是只读模板，Dockerfile 的每一条指令形成一层。容器是镜像的一次运行：dockerd 在只读层上面加一层可写空间，接上网络，然后执行启动命令。\n\n下面按官方入门工坊的顺序编写。先运行一份别人打好的镜像，再自己写三个文件，构建、运行、改一行再构建，最后推到仓库。官方 Python 指南在应用变大以后使用多阶段构建。这份教程使用单阶段 Dockerfile，每一条指令都留在最终镜像里，方便逐行对照。\n\n第 1 步，安装并打开 Docker Desktop。先运行官方工坊里的现成镜像，确认本机能启动容器。\n\n```bash\ndocker pull docker/welcome-to-docker\ndocker run --detach --name welcome --publish 8080:80 docker/welcome-to-docker\n```\n\n浏览器打开 http://127.0.0.1:8080 。--detach 让容器在后台运行，--name 给容器起名，--publish 8080:80 把本机的 8080 接到容器的 80。看完后删掉这个容器，镜像仍留在本机。\n\n```bash\ndocker rm --force welcome\n```\n\n第 2 步，新建一个空目录，里面放三个文件。程序用 Python 标准库监听 8080，并绑定 0.0.0.0，这样端口映射可以从本机访问到容器里的服务。\n\napp.py：\n\n```python\nfrom http.server import BaseHTTPRequestHandler, HTTPServer\n\nclass Handler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        body = \"payment ok\\n\".encode(\"utf-8\")\n        self.send_response(200)\n        self.send_header(\"Content-Type\", \"text/plain; charset=utf-8\")\n        self.send_header(\"Content-Length\", str(len(body)))\n        self.end_headers()\n        self.wfile.write(body)\n\nif __name__ == \"__main__\":\n    HTTPServer((\"0.0.0.0\", 8080), Handler).serve_forever()\n```\n\nrequirements.txt 先留空注释。以后要装第三方库，把库名写在这个文件里。\n\n```text\n# 当前程序只用标准库。以后在这里写库名，例如 flask==3.0.0\n```\n\nDockerfile：\n\n```dockerfile\nFROM python:3.12-slim\nWORKDIR /app\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY app.py .\nEXPOSE 8080\nCMD [\"python\", \"app.py\"]\n```\n\n逐行含义：\n\nFROM 选定基础镜像。python:3.12-slim 自带 Python 3.12，体积比完整版小。后面的指令都叠在这一层上面。\n\nWORKDIR 把后续命令的工作目录设为 /app。目录尚不存在时，构建会创建它。\n\n第一个 COPY 只复制依赖清单。紧接着的 RUN 按这份清单安装。业务代码放在更后面的 COPY。改 app.py 时，安装依赖的那一层可以复用。\n\nEXPOSE 8080 把容器打算使用的端口写进镜像说明。真正接到本机端口的是 docker run 的 --publish。\n\nCMD 使用 JSON 数组，容器启动时直接执行 python app.py。数组里的每一段是一个参数。\n\n同一目录再放 .dockerignore，避免把本机虚拟环境打进镜像。\n\n```text\n.venv\n__pycache__\n```\n\n第 3 步，在这三个文件所在的目录构建并运行。最后的小数点表示用当前目录作为构建上下文。\n\n```bash\ndocker build --tag shop/payment:1.0 .\ndocker run --detach --name payment --publish 8080:8080 shop/payment:1.0\n```\n\n--publish 8080:8080 里，冒号左边是本机端口，右边是容器端口。浏览器或 curl 访问 http://127.0.0.1:8080 ，响应正文是 payment ok。\n\n```bash\ncurl http://127.0.0.1:8080\ndocker logs payment\n```\n\n第 4 步，把 app.py 里的 payment ok 改成 payment v2，保存后再构建一次。\n\n```bash\ndocker build --tag shop/payment:1.1 .\n```\n\n构建日志里，pip install 那一层显示 CACHED。requirements.txt 和它之前的指令保持原样，这一层沿用上次的结果。COPY app.py 以及它后面的层会重新执行。然后换成新镜像。\n\n```bash\ndocker rm --force payment\ndocker run --detach --name payment --publish 8080:8080 shop/payment:1.1\ncurl http://127.0.0.1:8080\n```\n\n这次响应正文是 payment v2。\n\n第 5 步，把镜像推到仓库，换一台机器拉取同一标签再运行。下面的仓库地址换成你自己的 Docker Hub 用户名，先执行 docker login。\n\n```bash\ndocker tag shop/payment:1.1 你的用户名/payment:1.1\ndocker push 你的用户名/payment:1.1\n```\n\n另一台已经安装 Docker 的机器：\n\n```bash\ndocker pull 你的用户名/payment:1.1\ndocker run --detach --name payment --publish 8080:8080 你的用户名/payment:1.1\n```\n\n两台机器运行的是同一份镜像。官方概览说明：本机还没有这个镜像时，docker run 会先拉取，再为容器加上可写层和网络。",
+          "problem": "同一份程序在开发机上能跑，换一台服务器就因为缺库、版本不同而失败。镜像把运行所需的文件收在一起，换机器时拉取同一份镜像即可。",
+          "scenario": "把一个服务发布到测试机或生产机；同一台机器上同时跑多个互相隔离的服务；持续集成里构建镜像、跑测试、再推到生产仓库。",
+          "example": "按第 2 步写好三个文件后，docker build --tag shop/payment:1.0 . 得到本地镜像。docker run --publish 8080:8080 启动后，curl 返回 payment ok。只改 app.py 里的文字再构建，pip 那一层为 CACHED，curl 返回新文字。docker tag 加上仓库前缀并 docker push 之后，另一台机器 docker pull 同一标签再 docker run，得到同样的响应。",
+          "sources": "Docker 入门工坊：docker pull、docker run --publish、docker build --tag、docker push 的顺序。https://docs.docker.com/get-started/workshop/02_our_app/\nDockerfile 参考：FROM、WORKDIR、COPY、RUN、EXPOSE、CMD 的写法。https://docs.docker.com/reference/dockerfile/\nDocker 镜像分层：每条指令一层，未改动的层可以复用。https://docs.docker.com/get-started/docker-concepts/building-images/understanding-image-layers/\nDocker 官方概览：客户端、dockerd 和镜像仓库的分工。https://docs.docker.com/get-started/docker-overview/",
+          "repo": "",
+          "related": "云原生、Kubernetes、RESTful API"
+        }
+      ]
+    },
+    {
+      "name": "推理",
+      "note": "",
+      "terms": [
+        {
+          "name": "CoT",
+          "status": "未掌握",
+          "summary": "让模型先写出通往答案的中间步骤，再给出最终答案。英文是 Chain-of-Thought，链式思维。",
+          "asked_at": "",
+          "concept": "这个方法来自 2022 年 Wei 等人的论文 Chain-of-Thought Prompting。一条思维链是若干句自然语言，把题目和答案连起来。提示词里放几道已经写好中间步骤的例题，模型见到新题时会照着把步骤写出来。模型参数不用更新。直接要一个数字时，模型常把几步运算并成一次，中间算错也不容易被看见。\n\nWei 等人把思维链定义成通向最终答案的一串自然语言中间步骤，并用带有步骤的例题把它引出来。模型参数保持不变，变化的是提示词里有没有这串步骤。Kojima 等人随后发现，即使不给例题，只加上 Let’s think step by step，大模型也会先写步骤。他们报告，text-davinci-002 在 MultiArith 上的准确率从 17.7% 升到 78.7%，在 GSM8K 上从 10.4% 升到 40.7%。",
+          "problem": "算术、常识和符号推理里，输入到答案的映射不是一步能完成的。只给「题目 → 答案」的例子，模型往往不会稳定地把步骤展开。",
+          "scenario": "多步算术、需要先列条件再下结论的问题、希望看到答案是怎样算出来的场合。",
+          "example": "Wei 等人论文里的经典问法是：罗杰有 5 个网球，又买了 2 罐，每罐 3 个，现在一共多少个。思维链写成：原来有 5 个；2 罐乘 3 个是 6 个；5 加 6 等于 11。最后一句才是「答案是 11」。提示词里先放一道同样格式的例题，模型再按这个格式回答新题。",
+          "sources": "Wei 等人 Chain-of-Thought Prompting：用带中间步骤的例题引出推理。https://arxiv.org/abs/2201.11903\nKojima 等人 Large Language Models are Zero-Shot Reasoners：一句 Let’s think step by step 即可引出步骤，并给出 MultiArith 与 GSM8K 上的准确率。https://arxiv.org/abs/2205.11916",
+          "repo": "",
+          "related": "ReAct、ToT、提示词工程、大模型"
+        },
+        {
+          "name": "ReAct",
+          "status": "未掌握",
+          "summary": "让模型交替写出推理和动作。动作用来查询外部资料或操作环境，观察结果再决定下一步。英文是 Reasoning and Acting。",
+          "asked_at": "",
+          "concept": "这个方法来自 2022 年 Yao 等人的论文 ReAct。推理写成 Thought，不改变外部世界，只用来整理目前知道什么、下一步该做什么。动作写成 Action，例如 Search 去查维基百科，或在文字游戏里执行「走到桌子旁」。环境把结果作为 Observation 送回来。Thought、Action、Observation 可以重复多轮，最后用 Finish 给出答案。推理帮助安排和修改计划，动作把计划接到模型训练时没有的事实上。\n\n论文摘要写明，推理轨迹用来制定、跟踪和修改行动计划，动作用来查询知识库或操作环境。问答和事实验证接入维基百科接口，用来核对模型原来记住的事实。在 ALFWorld 和 WebShop 两个交互任务上，只用一两个示例，成功率比当时的模仿学习和强化学习方法分别高出 34 个和 10 个百分点。Google Research 的博文把一次循环概括为 Thought、Action 和 Observation。",
+          "problem": "只写思维链时，事实如果记错，后面的步骤会一路错下去，模型也无法在中途核对。只给动作、不写推理时，又缺少一份能看见的计划和例外处理。",
+          "scenario": "答案必须来自外部资料的问答、需要核对事实的判断、在网页或文字环境里分很多步完成的任务。",
+          "example": "论文用维基百科接口回答多跳问题。问题是科罗拉多造山运动的东段伸入哪个地区、那里的海拔范围是多少。模型先 Thought：要先搜索这个造山运动，找出东段伸入的地区，再查海拔。然后 Action：Search[Colorado orogeny]。Observation 告诉它东段伸入高平原。它再搜索高平原的海拔，确认之后 Finish。查到的句子可以纠正原来想错的方向。",
+          "sources": "Yao 等人 ReAct 论文：推理与动作交替，动作用来获取外部信息。https://arxiv.org/abs/2210.03629\nGoogle Research 博文：Thought 不改变环境，Action 取得 Observation。https://research.google/blog/react-synergizing-reasoning-and-acting-in-language-models/",
+          "repo": "",
+          "related": "CoT、ToT、工具调用、提示词工程"
+        },
+        {
+          "name": "ToT",
+          "status": "未掌握",
+          "summary": "把解题看成一棵树。同一步生成几个不同的想法，评估后保留有希望的分支，走不通就退回。英文是 Tree of Thoughts，思维树。",
+          "asked_at": "",
+          "concept": "这个方法来自 2023 年 Yao 等人的论文 Tree of Thoughts，把 CoT 的单条思维链推广成可以搜索的树。每个节点是一段完整的中间想法，可以是一行算式，也可以是一段写作计划。模型负责提出多个候选、给候选打分，搜索算法决定展开哪几支、是否退回。论文在 24 点、创意写作和填字游戏上做了实验。24 点用广度优先，每一步只保留少数看起来还能走到 24 的状态。\n\n论文把思维树定义成对思维链的推广。模型在完整的中间想法上探索多条路径，自己给候选打分，并可以前瞻或退回。实验用了三件需要搜索的任务：24 点、创意写作和 5×5 填字。24 点要求四个数各用一次，算出 24。论文报告，GPT-4 用思维链大约做出 4%，用思维树大约做出 74%。",
+          "problem": "有的题第一步就选错了，后面无法补救。单条思维链一旦写下开头，就只能顺着写完。需要试探、前瞻或回头的题目，一条路写到底容易失败。",
+          "scenario": "组合搜索，例如用给定数字凑出一个目标；需要比较几种大纲再动笔的写作；填字这种局部选择会影响后面的题目。",
+          "example": "24 点要求用 4、9、10、13 每个数恰好一次，通过加减乘除得到 24。一种思路是先写出 10 减 4 等于 6，另一支先写出 13 减 9 等于 4。评估之后留下这两支，下一步把 6 和 4 相乘，得到 (10 − 4) × (13 − 9) = 24。论文报告，GPT-4 用思维链大约做出 4% 的 24 点，用思维树大约做出 74%。",
+          "sources": "Yao 等人 Tree of Thoughts：多条思路、自评和退回；24 点上思维链约 4%，思维树约 74%。https://arxiv.org/abs/2305.10601\nWei 等人 Chain-of-Thought Prompting：思维树所推广的单条思维链。https://arxiv.org/abs/2201.11903",
+          "repo": "",
+          "related": "CoT、ReAct、提示词工程、大模型"
+        }
+      ]
+    },
+    {
+      "name": "评测",
+      "note": "",
+      "terms": [
+        {
+          "name": "数学推理基准（GSM8K、MultiArith）",
+          "status": "未掌握",
+          "summary": "都是给模型做的多步算术应用题集，题目是生活情景里的加减乘除，答案是一个数字，用来测「先写步骤」到底有没有用。",
+          "asked_at": "",
+          "concept": "MultiArith 来自 Roy 和 Roth 2015 年的论文 Solving General Arithmetic Word Problems，共 600 道，后来收进数学应用题仓库 MAWPS，每题要做两步或更多步计算。GSM8K 由 OpenAI 的 Cobbe 等人 2021 年发布，大约 8500 道小学应用题，每题用 2 到 8 步基本算术就能做完，公开划分是 7473 道训练题和 1319 道测试题。两套题的答案都便于程序核对：MultiArith 的答案是最后一个数字，GSM8K 的最后一行是 #### 加最终数字，中间结果放在 << >> 里。\n\nKojima 等人在 2022 年用它们测量零样本思维链。给 text-davinci-002 加上 “Let's think step by step” 之后，MultiArith 的准确率从 17.7% 升到 78.7%，GSM8K 从 10.4% 升到 40.7%。GSM8K 的标准答案写成自然语言步骤，所以它同时可以当监督微调的教材：题目、步骤、最终数字都是现成的配对样本。",
+          "problem": "只看模型会不会聊天，看不出它会不会把两步以上的加减乘除做对。固定的一套题，让「直接回答」和「先写步骤」可以比分数。",
+          "scenario": "比较不同的推理提示哪一种分数更高；检查一个新模型的多步算术表现；用 GSM8K 的训练集教较小的模型写出推理过程。",
+          "example": "MultiArith 里「黛比有 32 块糖，妹妹有 42 块，吃掉 35 块，还剩多少」，算式是 (32 + 42) − 35 = 39。GSM8K 里「四月卖给 48 个朋友，五月是四月的一半，一共卖出多少」，标准答案先写 48/2 = <<48/2=24>>24，再写 48+24 = <<48+24=72>>72，最后一行是 #### 72。",
+          "sources": "Roy 与 Roth，Solving General Arithmetic Word Problems：MultiArith 多步算术应用题。https://aclanthology.org/D15-1202/\nCobbe 等人，Training Verifiers to Solve Math Word Problems：GSM8K，小学应用题，2 到 8 步。https://arxiv.org/abs/2110.14168\nKojima 等人：零样本思维链在 MultiArith 上从 17.7% 升到 78.7%，在 GSM8K 上从 10.4% 升到 40.7%。https://arxiv.org/abs/2205.11916",
+          "repo": "",
+          "related": "CoT、ToT、指令微调（SFT）、大模型"
+        }
+      ]
+    },
+    {
+      "name": "编程助手",
+      "note": "",
+      "terms": [
+        {
+          "name": "Codex",
+          "status": "未掌握",
+          "summary": "OpenAI 的编程代理，包含在 ChatGPT 套餐里。同一个代理可以在网页、命令行、编辑器插件和手机上改代码。",
+          "asked_at": "2026-10-26 14:00",
+          "concept": "OpenAI 把 Codex 写成编程搭档。Plus 每月 20 美元，包含每周一段编码用量。Pro 每月 100 美元，额度覆盖多个项目的完整工作日。网页、命令行、编辑器插件和 iOS 用的是同一个 ChatGPT 账号。你合上电脑以后，云端环境里的任务继续跑，换一台设备还能接着看进度。它能并行多个代理，用电脑和浏览器核对结果，也能自动审查 Pull Request。已经在付 ChatGPT 的人，写代码时直接打开 Codex。",
+          "problem": "修难找的缺陷、做大范围重构、加一块新功能。这些事要读很多文件、跑命令、再根据结果改下一轮。",
+          "scenario": "在 ChatGPT 里丢一个仓库任务，人去开会，回来看云端改完的结果；在终端里对当前项目下指令；让它在合并前自动审查改动。",
+          "example": "后端要给订单接口补分页。开发者在 Codex 里说明接口路径、每页条数和测试命令。Codex 在云端仓库里改代码、跑测试。开发者合上电脑去开会，回来在手机上看到改动和测试结果，再决定要不要合并。",
+          "sources": "OpenAI Codex 产品页：包含在 ChatGPT 套餐中，支持云端任务、并行代理和自动审查。https://openai.com/codex/\nOpenAI Codex 价格说明：网页、命令行、编辑器插件和 iOS 共用套餐额度。https://developers.openai.com/codex/pricing/",
+          "repo": "",
+          "related": "Claude Code、Cursor、WorkBuddy、智能体系统"
+        },
+        {
+          "name": "Claude Code",
+          "status": "未掌握",
+          "summary": "Anthropic 的编程代理。它读取代码库、修改文件、运行命令，用在终端、IDE、桌面应用和浏览器里。",
+          "asked_at": "2026-10-26 14:00",
+          "concept": "官方概述写明，Claude Code 理解整个代码库，可以跨多个文件和工具把事情做完。终端是完整的命令行形态，安装后执行 `claude`，用 Claude 订阅或 Anthropic Console 登录。VS Code、JetBrains、桌面应用和网页也能打开它。官方把一次任务分成收集上下文、采取行动、核对结果。模型负责推理，工具负责读文件、改代码、跑测试。包住模型、提供工具并管理上下文的这一层，官方称为 agentic harness。原来用 VS Code 或 JetBrains 的人，在终端或扩展里把整段任务交出去，日常编辑器留在原地。",
+          "problem": "一次重构或一次缺陷修复要来回搜索、改文件、跑测试。人如果每一步都自己切换窗口，任务会停在中途。",
+          "scenario": "在项目目录打开终端，让它解释当前仓库、修一个失败的测试、按现有风格补一个接口；把构建日志从管道送进去，让它指出错误位置。",
+          "example": "登录接口的测试失败。开发者在项目目录执行 `claude`，贴上失败输出，并写明要保持现有的返回格式。Claude Code 先搜索相关文件，再改校验逻辑，然后自己跑测试。测试通过后，开发者在原来的编辑器里看这份改动，再提交。",
+          "sources": "Claude Code 概述：读代码库、改文件、跑命令，可用于终端、IDE、桌面和浏览器。https://code.claude.com/docs/en/\nClaude Code 工作方式：收集上下文、采取行动、核对结果，外层是 agentic harness。https://code.claude.com/docs/en/how-claude-code-works",
+          "repo": "",
+          "related": "Codex、Cursor、Harness、智能体系统"
+        },
+        {
+          "name": "WorkBuddy",
+          "status": "未掌握",
+          "summary": "腾讯的办公智能体。用自然语言交代任务，它自己拆步骤，并交出文档、表格、报告或代码结果。",
+          "asked_at": "2026-10-26 14:00",
+          "concept": "腾讯云把 WorkBuddy 写成全场景办公工作台，覆盖日常办公、代码开发和设计。用户用日常语言下任务，它拆解步骤、调用工具，并在授权的文件夹里读写，结果保存到本地。长时间任务可以在云端继续，客户端关掉以后仍往下做。企业版以混元大模型为核心，也可以混合接入其他模型。同一套产品里，写代码的一款叫 CodeBuddy：插件装进 VS Code 或 JetBrains，IDE 把需求、设计和部署放在一个工作台，命令行面向要跑脚本和部署的人。中文界面和腾讯账号让产品、运营、研发都能打开，所以中文社区里讨论它的人，范围大于只写代码的人。",
+          "problem": "周报、表格、调研和改本地文件分散在多个软件里。只回答问题的对话，交不出可以直接验收的文件。",
+          "scenario": "把一周的会议记录整理成周报；批量重命名授权文件夹里的材料；让 CodeBuddy 的命令行在现有项目里改代码并跑部署。",
+          "example": "运营要一份活动复盘。她把表格文件夹授权给 WorkBuddy，说「按渠道汇总报名和到场人数，写成一页结论」。WorkBuddy 读取表格、算出各渠道比例，并把报告写进该文件夹。研发同事要改同一活动的报名接口时，打开 CodeBuddy 的命令行，在项目里改代码并跑测试。",
+          "sources": "WorkBuddy 企业版概述：编码、办公、智能体托管三条产品线，CodeBuddy 负责编程。https://www.workbuddy.ai/docs/zh/enterprise/\n腾讯云 WorkBuddy：自然语言下任务，操作授权的本地文件，交付文档和报告。https://www.tencentcloud.com/zh/products/workbuddy\n腾讯云 CodeBuddy 说明：插件、IDE、命令行三种编程形态。https://cloud.tencent.com/document/product/1831/134342",
+          "repo": "",
+          "related": "Codex、Claude Code、Cursor、智能体系统"
+        },
+        {
+          "name": "Cursor",
+          "status": "未掌握",
+          "summary": "带补全和代理的代码编辑器。人在编辑器里写代码，也可以把一段任务交给代理，在编辑器、命令行或云端执行。",
+          "asked_at": "2026-10-26 14:00",
+          "concept": "Cursor 把模型放进编辑器。打字时由补全给出下一段，改动直接显示在文件旁边。代理可以读仓库、改多个文件、跑命令。官方价格页说明，当前套餐属于 X 订阅，编辑器里的代理、命令行和云端代理共用一份用量。Plus 每月 8 美元，包含 Grok 和 Composer 这些 Cursor 自己的模型。Claude、GPT、Gemini 从 Premium 每月 30 美元起，按各家 API 标价从预付额度扣除。云端代理、自动审查 Bugbot 也在 Premium 及以上。已经购买 ChatGPT 的人会打开 Codex，已经购买 Claude 的人会在终端运行 Claude Code，国内办公会打开 WorkBuddy。每天自己敲代码、要逐行看改动的人，会把编辑器换成 Cursor。",
+          "problem": "补全、对话、看改动和跑代理分散在不同窗口时，人要不断复制代码。Cursor 把这些放在同一个编辑器里。",
+          "scenario": "写函数时用补全接下一行；选中一段代码让代理按项目规则修改；在命令行里对当前仓库下指令；Premium 用户把长时间任务放到云端，或让 Bugbot 审查合并请求。",
+          "example": "开发者在 Cursor 里打开订单模块，选中列表接口，说明要加分页并补测试。代理修改接口和测试文件，编辑器并排显示改动。开发者看完再保留。需要 Claude 或 GPT 时，使用 Premium 的预付额度按 API 标价扣费。",
+          "sources": "Cursor 模型与价格：编辑器、命令行、云端代理共用用量；Plus 使用 Cursor 自己的模型，第三方模型从 Premium 起按 API 标价计费。https://cursor.com/docs/models-and-pricing",
+          "repo": "工作区里的 `.cursor/hooks.json` 在 Cursor 打开时启动词汇服务。词汇页、规则和练习都在这个编辑器里维护。",
+          "related": "Codex、Claude Code、WorkBuddy、Harness"
+        }
+      ]
+    },
+    {
+      "name": "优化",
+      "note": "",
+      "terms": [
+        {
+          "name": "对偶线性规划",
+          "status": "未掌握",
+          "summary": "由一个线性规划按固定对应规则写出的另一个线性规划。原问题的每个约束变成对偶的一个变量，原问题的每个变量变成对偶的一个约束。",
+          "asked_at": "2026-10-30 18:47",
+          "concept": "线性规划是在一组线性约束下，让一个线性目标函数取最大或最小。对偶线性规划是按同一张系数表换写出来的第二个规划。维基百科把这对规划称为 primal 与 dual。原问题取最大化时，对偶取最小化；原问题取最小化时，对偶取最大化。两边都有可行解、并且其中一个取得最优时，两个最优值相等。这称为强对偶。原问题还在求解时，对偶的一个可行解就给出原目标的界限：最大化问题的目标值小于或等于最小化对偶的目标值。\n\n换算按下面的表进行。先处理原问题是最大化的情况。\n\n| 原问题 | 对偶 |\n| --- | --- |\n| 最大化 | 最小化 |\n| 第 i 个约束是 ≤ | 第 i 个对偶变量 ≥ 0 |\n| 第 i 个约束是 ≥ | 第 i 个对偶变量 ≤ 0 |\n| 第 i 个约束是等式 | 第 i 个对偶变量可取任意实数 |\n| 第 j 个变量 ≥ 0 | 第 j 个对偶约束是 ≥ |\n| 第 j 个变量 ≤ 0 | 第 j 个对偶约束是 ≤ |\n| 第 j 个变量可取任意实数 | 第 j 个对偶约束是等式 |\n\n原问题是最小化时，对偶改成最大化，上表里变量和约束的不等号方向对调，等式仍然对应可取任意实数的量。\n\n系数这样搬。对偶目标的系数是原约束的右端。第 j 个对偶约束的系数是原约束系数矩阵的第 j 列，右端是原目标里第 j 个变量的系数。\n\n标准形式可以直接写成矩阵。原问题是\n\n```text\nmax c·x\nAx ≤ b\nx ≥ 0\n```\n\n对偶就是\n\n```text\nmin b·y\nA 的转置 y ≥ c\ny ≥ 0\n```",
+          "problem": "原问题变量很多、约束较少时，直接在原问题上找最优比较费步骤。对偶把约束和变量对调，有时约束更少。对偶的可行解还能立刻给出原目标还能改进多少。",
+          "scenario": "生产计划里，原问题决定每种产品做多少；对偶变量表示每种资源再增加一单位时，最优利润增加多少。求解器也常同时维护原问题和对偶，用两边的可行解判断是否已经最优。",
+          "example": "工厂生产两种产品，利润是 3 和 5。约束是 x1 ≤ 4，2 x2 ≤ 12，3 x1 + 2 x2 ≤ 18，两种产量都 ≥ 0，目标是利润最大。三个约束对应 y1、y2、y3，三个对偶变量都 ≥ 0。两个产量对应两个 ≥ 约束。对偶是最小化 4 y1 + 12 y2 + 18 y3，约束是 y1 + 3 y3 ≥ 3 和 2 y2 + 2 y3 ≥ 5。原问题最优产量 x1 = 2、x2 = 6，利润 36。对偶的 y1 = 0、y2 = 1.5、y3 = 1 也得到 36。",
+          "sources": "维基百科 Dual linear program：原问题与对偶的构造、弱对偶和强对偶。标准形式 max c·x、Ax ≤ b、x ≥ 0 的对偶是 min b·y、A 转置 y ≥ c、y ≥ 0。https://en.wikipedia.org/wiki/Dual_linear_program\n维基百科 Linear programming：线性规划在线性约束下优化线性目标，并说明对偶性。https://en.wikipedia.org/wiki/Linear_programming",
+          "repo": "",
+          "related": "线性规划"
+        }
+      ]
+    },
+    {
+      "name": "操作系统",
+      "note": "",
+      "terms": [
+        {
+          "name": "程序状态字",
+          "status": "未掌握",
+          "summary": "CPU 保存的当前程序运行状态。中断发生时硬件把它存下来，中断返回时再恢复。",
+          "asked_at": "2026-10-30 18:59",
+          "concept": "国内教材里的程序状态字通常包括模式位、中断允许位和条件码。模式位标明用户态或内核态，中断允许位标明是否响应可屏蔽中断，条件码标明最近一次运算是否为零、为负、有进位或溢出。IBM System/360 的程序状态字还包含下一条指令的地址。x86 把条件码和中断允许位放在 RFLAGS，把当前特权级放在代码段寄存器 CS。教材说的保存程序状态字，在 x86 上就是保存返回所需的这些状态。",
+          "problem": "中断会让 CPU 先去做内核的处理程序。返回时必须知道原来是用户态还是内核态、原来的运算结果标志，以及是否允许中断。这些信息要在进入中断时存下来。",
+          "scenario": "内核处理时钟中断、磁盘中断和系统调用时，都要保存并恢复程序状态字。调度器切换线程时，寄存器上下文里也包含这份状态。",
+          "example": "用户程序在用户态做加法。磁盘中断到来后，硬件保存当前程序状态字。处理程序在内核态运行。中断返回指令恢复这份程序状态字，模式位回到用户态，程序从下一条指令继续。",
+          "sources": "维基百科 Program status word：IBM 的程序状态字包含中断屏蔽、条件码和指令地址。https://en.wikipedia.org/wiki/Program_status_word\n维基百科 FLAGS register：x86 的 RFLAGS 包含条件码和中断允许位 IF。https://en.wikipedia.org/wiki/FLAGS_register",
+          "repo": "",
+          "related": "用户态、内核态、中断"
+        }
+      ]
+    },
+    {
+      "name": "算法",
+      "note": "",
+      "terms": [
+        {
+          "name": "KMP",
+          "status": "未掌握",
+          "summary": "在文本里查找模式串出现位置的字符串匹配算法。全称是 Knuth–Morris–Pratt。",
+          "asked_at": "2026-10-30 19:23",
+          "concept": "KMP 由 Donald Knuth、James H. Morris 和 Vaughan Pratt 在 1977 年发表。它先只根据模式串算出前缀函数。π[i] 表示模式串前 i+1 个字符里，最长真前缀同时也是后缀的长度。真前缀的长度小于这 i+1 个字符，π[0] 为 0。扫描文本时，用一个整数记录模式串已经对上的长度。当前字符对上，这个长度加 1。对不上时，把长度改成前缀函数给出的较短前缀，再用同一个文本字符比较。文本的下标只向前移动。长度达到模式串全长时，记下这次出现的起始下标，再按前缀函数继续向后找，重叠的出现也算。",
+          "problem": "逐个起点重试时，一旦中途对不上，模式串就要回到开头，同一段文本会被反复比较。模式串自身的重复事先算进前缀函数之后，已经对上的后缀可以直接当成下一次的前缀。",
+          "scenario": "在长日志、基因序列或全文中查找一个固定的关键字。模式串先算一次前缀函数，同一模式串可以反复用于不同文本。",
+          "example": "模式串 ABABCABAB 的前缀函数是 0,0,1,2,0,1,2,3,4。在文本 ABABDABACDABABCABAB 中，它从下标 10 开始完整出现一次。模式串 AA 的前缀函数是 0,1。在文本 AAA 中，它从下标 0 和 1 各出现一次。",
+          "sources": "Knuth、Morris、Pratt 的论文《Fast Pattern Matching in Strings》给出按模式串预处理、再线性扫描文本的方法。https://doi.org/10.1137/0206024\n维基百科 Knuth–Morris–Pratt algorithm：前缀函数保存既是真前缀又是后缀的最长长度，失配后文本下标继续向前。https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm",
+          "repo": "",
+          "related": "前缀函数、字符串匹配"
+        }
+      ]
+    }
+  ]
+}

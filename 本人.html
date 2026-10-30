@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <script src="public-read.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>任沛新 · 本人对话</title>
+  <meta name="description" content="用任的本人说明写回答，再用任的录音读出来。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23141210'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='36' fill='%23f0d2cb' font-family='serif'%3E任%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#content">进入对话</a>
+  <div class="shell">
+    <aside class="rail">
+      <p class="seal" aria-hidden="true">任</p>
+      <h1>任沛新</h1>
+      <p class="who">男 · 24 岁 · 汉族<br>河北邯郸</p>
+      <p class="who">格拉斯哥大学<br>MSc in Computing Science<br>Distinction</p>
+      <div class="switch" role="navigation" aria-label="切换界面">
+        <a href="index.html">个人简历</a>
+        <a href="学习.html">学习笔记</a>
+        <a href="词汇.html">词汇笔记</a>
+        <a href="算法.html">算法习题</a>
+        <a href="知识.html">知识库</a>
+        <a href="本人.html" class="is-active" aria-current="page">本人对话</a>
+        <a href="科技.html">科技日览</a>
+        <a href="难点.html">开发难点</a>
+      </div>
+      <div class="contact">
+        <p><a href="mailto:renpeixin0924@icloud.com">renpeixin0924@icloud.com</a></p>
+        <p><a href="tel:13180500889">13180500889</a></p>
+        <p class="aim">求职 · 北京<br>人工智能、数据分析</p>
+      </div>
+    </aside>
+    <main id="content">
+      <section id="self">
+        <h2><span class="num">01</span>和任说话</h2>
+        <p class="section-note">文字按 <code>data/wechat/本人说明.md</code> 来写。日常问题用日常录音读出来，问一个词或一段代码的意思时用解释录音。学习笔记页继续负责查笔记和练习。第一次合成要等声音模型载入。</p>
+        <div id="thread" class="thread" aria-live="polite"></div>
+        <form id="composer" class="composer">
+          <label class="search">说一句
+            <input id="ask" name="text" type="text" placeholder="今晚吃什么，或 class 后面的括号是什么意思" autocomplete="off" required>
+          </label>
+          <button class="send" type="submit">发送</button>
+          <button class="clear" id="fresh" type="button">清空记录</button>
+        </form>
+        <p id="self-status">打开本页后即可发送。地址是 http://127.0.0.1:8765/本人.html</p>
+      </section>
+    </main>
+  </div>
+  <script>
+    const thread = document.querySelector("#thread");
+    const form = document.querySelector("#composer");
+    const ask = document.querySelector("#ask");
+    const status = document.querySelector("#self-status");
+    const send = form.querySelector(".send");
+
+    function bubble(role, text, audio) {
+      const item = document.createElement("article");
+      item.className = "bubble " + role;
+      const who = document.createElement("span");
+      who.className = "role";
+      who.textContent = role === "user" ? "你" : "任";
+      const body = document.createElement("p");
+      body.className = "body";
+      body.textContent = text;
+      item.append(who, body);
+      if (audio) {
+        const player = document.createElement("audio");
+        player.controls = true;
+        player.src = audio;
+        player.autoplay = true;
+        item.append(player);
+      }
+      thread.append(item);
+    }
+
+    function render(messages) {
+      thread.replaceChildren();
+      for (const message of messages || []) {
+        if (message.role === "user" || message.role === "assistant") {
+          bubble(message.role, message.content);
+        }
+      }
+    }
+
+    async function loadHistory() {
+      try {
+        const response = await fetch("/api/self");
+        if (!response.ok) return;
+        const payload = await response.json();
+        render(payload.messages);
+      } catch (error) {
+        status.textContent = "当前页面正在等待本机接口。在仓库根目录执行 .venv/bin/python -m agent.web 后再打开这一页。";
+      }
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const text = ask.value.trim();
+      if (!text) return;
+      bubble("user", text);
+      ask.value = "";
+      send.disabled = true;
+      status.textContent = "正在按本人说明写回答，并合成声音。";
+      try {
+        const response = await fetch("/api/self", {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({text})
+        });
+        const payload = await response.json();
+        if (!response.ok) {
+          status.textContent = payload.error || "这一轮停在接口错误。";
+          return;
+        }
+        bubble("assistant", payload.answer, payload.audio);
+        const voiceName = payload.voice === "解释" ? "解释录音" : "日常录音";
+        status.textContent = payload.error || ("这一轮用的是" + voiceName + "。");
+      } catch (error) {
+        status.textContent = "当前页面正在等待本机接口。";
+      } finally {
+        send.disabled = false;
+        ask.focus();
+      }
+    });
+
+    document.querySelector("#fresh").addEventListener("click", async () => {
+      await fetch("/api/self", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({text: "", fresh: true})
+      });
+      thread.replaceChildren();
+      status.textContent = "对话记录已清空。";
+    });
+
+    loadHistory();
+  </script>
+  <script src="back.js?v=2"></script>
+</body>
+</html>

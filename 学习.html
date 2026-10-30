@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <script src="public-read.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>任沛新 · 学习笔记</title>
+  <meta name="description" content="任沛新在 AIAPP 工作区中的学习历程、实操和对话。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23141210'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='36' fill='%23f0d2cb' font-family='serif'%3E任%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css?v=code-color">
+</head>
+<body>
+  <a class="skip" href="#content">进入正文</a>
+  <div class="shell">
+    <aside class="rail">
+      <p class="seal" aria-hidden="true">任</p>
+      <h1>任沛新</h1>
+      <p class="who">男 · 24 岁 · 汉族<br>河北邯郸</p>
+      <p class="who">格拉斯哥大学<br>MSc in Computing Science<br>Distinction</p>
+      <div class="switch" role="navigation" aria-label="切换界面">
+        <a href="index.html">个人简历</a>
+        <a href="学习.html" class="is-active" aria-current="page">学习笔记</a>
+        <a href="词汇.html">词汇笔记</a>
+        <a href="算法.html">算法习题</a>
+        <a href="知识.html">知识库</a>
+        <a href="本人.html">本人对话</a>
+        <a href="科技.html">科技日览</a>
+        <a href="难点.html">开发难点</a>
+      </div>
+      <nav aria-label="页内导航">
+        <a class="is-active" href="#journey">学习历程</a>
+        <a href="#lab">实操</a>
+        <a href="#chat">对话</a>
+      </nav>
+      <div class="contact">
+        <p><a href="mailto:renpeixin0924@icloud.com">renpeixin0924@icloud.com</a></p>
+        <p><a href="tel:13180500889">13180500889</a></p>
+        <p class="aim">求职 · 北京<br>人工智能、数据分析</p>
+      </div>
+    </aside>
+    <main id="content">
+<section id="journey">
+        <h2><span class="num">01</span>学习历程</h2>
+        <p class="section-note">顺序来自仓库 README，日期来自 Git 提交。代码说明来自 <code>笔记/从头做智能体应用.md</code>。</p>
+        <ul class="stats">
+          <li><span>学习进度</span><strong>9</strong><em>知识库页面</em></li>
+          <li><span>词汇笔记</span><a href="词汇.html"><strong>独立一页</strong><em>一次阅读一条</em></a></li>
+          <li><span>算法习题</span><a href="算法.html"><strong>独立一页</strong><em>一次阅读一道</em></a></li>
+        </ul>
+
+        <div class="spread">
+        <ol class="timeline">
+          <li>
+            <div class="row">
+              <time datetime="2026-10-15">2026-10-15</time>
+              <span class="state-done">已完成</span>
+              <span class="commit">d58ef88</span>
+            </div>
+            <h3>智能体循环</h3>
+            <p>读取消息、做出决定、执行工具。提交说明是「记录智能体循环的第一课」。</p>
+          </li>
+          <li>
+            <div class="row">
+              <time datetime="2026-10-19">2026-10-19</time>
+              <span class="state-done">已完成</span>
+              <span class="commit">3f974ad</span>
+            </div>
+            <h3>模型大脑</h3>
+            <p>阅读全部消息，输出 JSON，决定直接回答或调用工具。离线规则大脑仍然保留。</p>
+          </li>
+          <li>
+            <div class="row">
+              <time datetime="2026-10-21">2026-10-21</time>
+              <span class="state-done">已完成</span>
+              <span class="commit">88b308b · 0f34185</span>
+            </div>
+            <h3>Cursor 用户密钥</h3>
+            <p>先区分 Cursor 用户密钥和聊天接口密钥，再使用 Cursor 用户密钥驱动决定。工具仍由本地循环执行。</p>
+          </li>
+          <li>
+            <div class="row">
+              <time datetime="2026-10-21">2026-10-21</time>
+              <span class="state-done">已完成</span>
+              <span class="commit">3907abe</span>
+            </div>
+            <h3>对话写入文件</h3>
+            <p>对话保存在 <code>data/conversation.json</code>。程序重启后继续读取。加上 <code>--fresh</code> 可以清空记录。</p>
+          </li>
+          <li>
+            <div class="row">
+              <time datetime="2026-10-21">2026-10-21</time>
+              <span class="state-done">已完成</span>
+            </div>
+            <h3>个人主页里的对话</h3>
+            <p>第 5 步接在本页。浏览器把问题发给本机接口，执行 <code>Agent.run</code>：做决定、调用工具，并写回同一个 JSON 文件。</p>
+          </li>
+          <li>
+            <div class="row">
+              <time datetime="2026-10-21">2026-10-21</time>
+              <span class="state-done">已完成</span>
+              <span class="commit">054997b</span>
+            </div>
+            <h3>阅读仓库笔记</h3>
+            <p>新增工具 <code>read_note</code>。参数只能是「学习笔记」「词汇」「说明」。规则大脑收到「阅读 词汇」时执行这个工具。</p>
+          </li>
+          <li>
+            <div class="row">
+              <time datetime="2026-10-23">2026-10-23</time>
+              <span class="state-done">已完成</span>
+            </div>
+            <h3>查找笔记并编排学习</h3>
+            <p>询问时间、相加、阅读、查找时，循环会补上对应工具。发送「学习 工具调用」时，先执行 <code>search_notes</code>，再执行 <code>practice_prompt</code>，然后组织回答。对话里按步骤显示决定。</p>
+          </li>
+          <li>
+            <div class="row">
+              <time datetime="2026-10-24">2026-10-24</time>
+              <span class="state-done">已完成</span>
+            </div>
+            <h3>回答改成短卡片</h3>
+            <p>查找和学习给出询问时间、一句话、一个例子、相关词汇，以及跳到词汇页的链接。工具步骤默认收起。早先复制整段笔记的回答也收起。</p>
+          </li>
+          <li class="now">
+            <div class="row">
+              <time datetime="2026-10-29">2026-10-29</time>
+              <span class="state-now">当前进度</span>
+            </div>
+            <h3>知识库页面</h3>
+            <p>词汇和算法两份解析代码合并成 <code>agent/mdparse.py</code>。新增 <code>笔记/知识/</code> 目录和 <code>agent/knowledge.py</code>：新建一个 md 文件就是一个新主题，页面 <code>知识.html</code> 通过 <code>/api/knowledge</code> 读取，不用改代码。</p>
+          </li>
+        </ol>
+
+        <div class="block logic">
+          <h3>当前代码在做什么</h3>
+          <p>程序从 <code>agent/demo.py</code> 进入。它按参数选择一种大脑，从 <code>data/conversation.json</code> 读出历史，再调用 <code>Agent.run</code>。</p>
+          <ol class="flow">
+            <li><span>进入</span><small>选择一种大脑</small></li>
+            <li><span>读取</span><small>JSON 里的历史</small></li>
+            <li><span>循环</span><small>最多 6 步</small></li>
+            <li><span>写回</span><small>保存全部消息</small></li>
+          </ol>
+          <p><code>Agent.run</code> 最多循环 6 步。每步向大脑要一个决定：<code>final</code> 结束并记下回答，<code>tool</code> 执行 <code>TOOLS</code> 里的函数并把结果写成下一条消息。<code>finally</code> 把全部消息写回 JSON。</p>
+          <p>三种大脑共用 <code>decide(messages, tools)</code>。</p>
+          <div class="brains">
+            <article>
+              <h3>规则大脑</h3>
+              <p><code>--rules</code> 按本轮用户消息选择工具。看到工具结果后给出回答。不访问 Cursor。</p>
+            </article>
+            <article class="here">
+              <h3>Cursor 大脑</h3>
+              <p>默认路径。阅读全部消息，并要求返回 JSON。调用时 <code>tools=[]</code>，仓库修改不发生在 SDK 里。</p>
+            </article>
+            <article>
+              <h3>聊天接口</h3>
+              <p><code>--chat</code> 阅读全部消息，并要求返回 JSON。当前指向本机 Ollama 上的 Qwen2.5 14B。</p>
+            </article>
+          </div>
+          <p>在仓库根目录运行 <code>python -m agent.demo</code>。依据文件：<code>agent/loop.py</code>、<code>agent/memory.py</code>、<code>agent/brain.py</code>、<code>agent/cursor_brain.py</code>、<code>agent/model_brain.py</code>、<code>agent/tools.py</code>。</p>
+        </div>
+        </div>
+      </section>
+
+      <div class="spread lower">
+      <section id="lab">
+        <h2><span class="num">02</span>实操</h2>
+        <p class="section-note">这一板块按一个主题动手做。当前主题是 LangChain。三步都调用 <code>langchain-core</code>，结果由本机接口返回。</p>
+        <h3>LangChain 是什么</h3>
+        <p>LangChain 是一个用来搭建大模型应用的 Python 框架。它把反复出现的零件收成库：提示词模板、对话模型、工具、输出解析，以及把这些零件接起来的写法。</p>
+        <p>提示词模板先写好消息骨架，把会变化的内容留成空位，例如 <code>{topic}</code>。调用时传入具体文字，空位才被填上。对话模型阅读填好的消息，生成下一段文字。工具是程序里的函数，有名称、说明和参数；模型可以要求执行它，真正运行函数的仍是程序。</p>
+        <p>这些零件都遵守同一套调用方式：<code>invoke</code> 负责启动。<code>|</code> 是管道，左边的产出原样交给右边。这套写法叫做 LCEL，英文是 LangChain Expression Language。官方文档把「模板、模型、工具、管道」当作搭建应用的基本组合。</p>
+        <p>下面三步不连接模型服务。第二步用一个本地函数站在对话模型的位置，专门让你看见管道送过去的内容。接上真实模型时，替换的是这个函数，前面的模板和 <code>invoke</code> 保持不变。</p>
+        <div id="lab-steps"></div>
+        <p id="lab-status" class="section-note" hidden></p>
+      </section>
+
+      <section id="chat">
+        <h2><span class="num">03</span>和智能体对话</h2>
+        <p class="section-note">这一节接在个人主页里。发送后执行 <code>Agent.run</code>，消息写入 <code>data/conversation.json</code>。打开页面时选中本地模型，使用本机 Qwen2.5 14B，一次决定大约需要十几秒。规则大脑立即回答。Cursor 每次决定大约需要几十秒。可以发送「查找 LoRA」或「学习 工具调用」。回答给出一句话、例子、相关词汇和笔记链接，不再贴出整段笔记。</p>
+        <div class="brains-switch" role="toolbar" aria-label="选择大脑">
+          <button type="button" class="brain-choice" data-brain="rules" aria-pressed="false">规则大脑</button>
+          <button type="button" class="brain-choice is-active" data-brain="chat" aria-pressed="true">本地模型</button>
+          <button type="button" class="brain-choice" data-brain="cursor" aria-pressed="false">Cursor</button>
+        </div>
+        <div id="thread" class="thread" aria-live="polite"></div>
+        <form id="composer" class="composer">
+          <label class="search">问题
+            <input id="ask" name="text" type="text" placeholder="现在几点，查找 LoRA，或学习 工具调用" autocomplete="off" required>
+          </label>
+          <button class="send" type="submit">发送</button>
+          <button class="clear" id="fresh" type="button">清空记录</button>
+        </form>
+        <p id="chat-status">用 Cursor 打开本仓库后即可访问 http://127.0.0.1:8765/学习.html 。服务随 Cursor 退出而停止。</p>
+      </section>
+
+      </div>
+
+      <footer>
+        <p>学习记录对应 2026-10-15 至 2026-10-29 的提交。词汇、算法和知识库在单独页面。对话和实操留在本页。</p>
+      </footer>
+
+    </main>
+  </div>
+
+  <script src="code-color.js"></script>
+  <script>
+    const links = [...document.querySelectorAll(".rail nav a")];
+    const sections = links
+      .map((link) => document.querySelector(link.getAttribute("href")))
+      .filter(Boolean);
+
+    function spy() {
+      const mark = window.scrollY + 140;
+      let current = sections[0];
+      let currentTop = current.getBoundingClientRect().top + window.scrollY;
+      for (const section of sections) {
+        const top = section.getBoundingClientRect().top + window.scrollY;
+        if (top <= mark && top > currentTop + 80) {
+          current = section;
+          currentTop = top;
+        }
+      }
+      for (const link of links) {
+        link.classList.toggle("is-active", link.getAttribute("href") === `#${current.id}`);
+      }
+    }
+
+    document.addEventListener("scroll", spy, { passive: true });
+    spy();
+
+    const thread = document.querySelector("#thread");
+    const composer = document.querySelector("#composer");
+    const ask = document.querySelector("#ask");
+    const fresh = document.querySelector("#fresh");
+    const chatStatus = document.querySelector("#chat-status");
+    const brainButtons = [...document.querySelectorAll("[data-brain]")];
+    const roleName = { user: "你", tool: "工具", assistant: "助手" };
+
+    function selectedBrain() {
+      const active = document.querySelector("[data-brain].is-active");
+      return active ? active.dataset.brain : "chat";
+    }
+
+    function isSafeHref(href) {
+      return href.startsWith("词汇.html") || href.startsWith("学习.html") || href.startsWith("index.html");
+    }
+
+    function appendText(node, text) {
+      const parts = text.split("\n");
+      parts.forEach((part, index) => {
+        if (index) node.append(document.createElement("br"));
+        if (part) node.append(document.createTextNode(part));
+      });
+    }
+
+    function renderRich(node, text) {
+      node.replaceChildren();
+      const pattern = /\[([^\]\n]+)\]\(([^)\s]+)\)/g;
+      let cursor = 0;
+      for (const match of text.matchAll(pattern)) {
+        appendText(node, text.slice(cursor, match.index));
+        const href = match[2];
+        if (isSafeHref(href)) {
+          const anchor = document.createElement("a");
+          anchor.href = href;
+          anchor.textContent = match[1];
+          node.append(anchor);
+        } else {
+          appendText(node, match[0]);
+        }
+        cursor = match.index + match[0].length;
+      }
+      appendText(node, text.slice(cursor));
+    }
+
+    function toolSummary(content) {
+      const name = content.split("(", 1)[0].trim();
+      return name ? `调用了 ${name}` : "调用了工具";
+    }
+
+    function renderMessages(messages) {
+      thread.replaceChildren();
+      for (const [index, message] of messages.entries()) {
+        const item = document.createElement("article");
+        item.className = `bubble ${message.role}`;
+        const step = document.createElement("p");
+        step.className = "step";
+        step.textContent = `第 ${index + 1} 步`;
+        const who = document.createElement("p");
+        who.className = "role";
+        who.textContent = roleName[message.role] || message.role;
+        const folded = message.role === "tool" || (message.role === "assistant" && (message.content.startsWith("工具返回：") || message.content.length > 500));
+        if (folded) {
+          const details = document.createElement("details");
+          const summary = document.createElement("summary");
+          summary.textContent = message.role === "tool" ? toolSummary(message.content) : "早先的长回答，已经收起";
+          const body = document.createElement("div");
+          body.className = "body";
+          renderRich(body, message.content);
+          details.append(summary, body);
+          item.append(step, who, details);
+        } else {
+          const body = document.createElement("div");
+          body.className = "body";
+          renderRich(body, message.content);
+          item.append(step, who, body);
+        }
+        thread.append(item);
+      }
+    }
+
+    function setBusy(busy) {
+      ask.disabled = busy;
+      fresh.disabled = busy;
+      composer.querySelector(".send").disabled = busy;
+    }
+
+    async function postChat(payload) {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "发送失败");
+      return data;
+    }
+
+    async function loadHistory() {
+      try {
+        const response = await fetch("/api/history");
+        if (!response.ok) return;
+        const data = await response.json();
+        renderMessages(data.messages || []);
+        chatStatus.textContent = data.messages && data.messages.length
+          ? `已恢复 ${data.messages.length} 条消息`
+          : "记录是空的。可以问「现在几点」或「相加 1,2,3」。";
+      } catch (_error) {
+        chatStatus.textContent = "当前页面没有连上本机接口。用 Cursor 重新打开本仓库后会启动服务。也可以在仓库根目录执行 .venv/bin/python -m agent.web ，再打开 http://127.0.0.1:8765/学习.html";
+      }
+    }
+
+    for (const button of brainButtons) {
+      button.addEventListener("click", () => {
+        for (const item of brainButtons) {
+          const on = item === button;
+          item.classList.toggle("is-active", on);
+          item.setAttribute("aria-pressed", on ? "true" : "false");
+        }
+      });
+    }
+
+    composer.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const text = ask.value.trim();
+      if (!text) return;
+      setBusy(true);
+      const brainName = selectedBrain();
+      chatStatus.textContent = brainName === "cursor"
+        ? "正在等待 Cursor 返回决定"
+        : brainName === "chat"
+          ? "正在等待本机模型返回决定"
+          : "正在做决定";
+      try {
+        const data = await postChat({ text, brain: selectedBrain() });
+        renderMessages(data.messages);
+        ask.value = "";
+        chatStatus.textContent = "已写回 data/conversation.json";
+      } catch (error) {
+        chatStatus.textContent = error.message;
+      } finally {
+        setBusy(false);
+        ask.focus();
+      }
+    });
+
+    fresh.addEventListener("click", async () => {
+      setBusy(true);
+      chatStatus.textContent = "正在清空记录";
+      try {
+        const data = await postChat({ text: "", brain: selectedBrain(), fresh: true });
+        renderMessages(data.messages);
+        chatStatus.textContent = "记录已清空";
+      } catch (error) {
+        chatStatus.textContent = error.message;
+      } finally {
+        setBusy(false);
+      }
+    });
+
+    loadHistory();
+
+    const labSteps = document.querySelector("#lab-steps");
+    const labStatus = document.querySelector("#lab-status");
+
+    function renderLab(payload) {
+      labSteps.replaceChildren();
+      for (const lesson of payload.lessons || []) {
+        const card = document.createElement("article");
+        card.className = "lab-card";
+        const title = document.createElement("h3");
+        title.textContent = lesson.title;
+        const lead = document.createElement("p");
+        lead.textContent = lesson.lead;
+        const code = document.createElement("pre");
+        code.className = "code-block";
+        code.append(window.CodeColor.highlight(lesson.code, "python"));
+        const form = document.createElement("form");
+        form.className = "lab-form";
+        const inputs = {};
+        for (const field of lesson.fields) {
+          const label = document.createElement("label");
+          label.textContent = field.label;
+          const input = document.createElement("input");
+          input.type = "text";
+          input.name = field.name;
+          input.placeholder = field.placeholder || "";
+          input.required = true;
+          label.append(input);
+          form.append(label);
+          inputs[field.name] = input;
+        }
+        const button = document.createElement("button");
+        button.type = "submit";
+        button.className = "check";
+        button.textContent = "运行";
+        const output = document.createElement("pre");
+        output.className = "lab-output";
+        output.hidden = true;
+        form.append(button);
+        form.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const body = {};
+          for (const [name, input] of Object.entries(inputs)) body[name] = input.value;
+          button.disabled = true;
+          output.hidden = false;
+          output.textContent = "正在运行";
+          try {
+            const response = await fetch("/api/lab", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ id: lesson.id, inputs: body }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || "运行失败");
+            output.textContent = data.output;
+          } catch (error) {
+            output.textContent = error.message;
+          } finally {
+            button.disabled = false;
+          }
+        });
+        card.append(title, lead, code, form, output);
+        labSteps.append(card);
+      }
+    }
+
+    async function loadLab() {
+      try {
+        const response = await fetch("/api/lab");
+        if (!response.ok) throw new Error("实操接口没有就绪");
+        renderLab(await response.json());
+      } catch (_error) {
+        labStatus.hidden = false;
+        labStatus.textContent = "实操需要本机接口。用 Cursor 重新打开本仓库后会启动服务，再打开 http://127.0.0.1:8765/学习.html";
+      }
+    }
+
+    loadLab();
+  </script>
+  <script src="back.js?v=2"></script>
+</body>
+</html>

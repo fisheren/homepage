@@ -1,0 +1,54 @@
+{
+  "topic": "LangChain",
+  "lessons": [
+    {
+      "id": "prompt",
+      "title": "1. 填写提示词模板",
+      "lead": "ChatPromptTemplate 先写好消息骨架，花括号里的名字是空位。invoke 时传入字典，空位才会被填上。模型还没有参与。",
+      "code": "prompt = ChatPromptTemplate.from_messages([\n    (\"system\", \"你用三句话介绍{topic}。每句话只讲一个要点。\"),\n    (\"human\", \"{question}\"),\n])\nprompt.invoke({\"topic\": topic, \"question\": question})",
+      "fields": [
+        {
+          "name": "topic",
+          "label": "主题",
+          "placeholder": "容器"
+        },
+        {
+          "name": "question",
+          "label": "问题",
+          "placeholder": "它把什么打在一起？"
+        }
+      ]
+    },
+    {
+      "id": "chain",
+      "title": "2. 用管道接上下一步",
+      "lead": "竖线 | 是 LangChain 的管道。左边 invoke 的结果，原样交给右边。这里右边是一个本地函数，专门代替对话模型，让你看见模板产出的两句消息。",
+      "code": "def speak(prompt_value):\n    system = prompt_value.messages[0].content\n    human = prompt_value.messages[1].content\n    return f\"系统提示：{system}\\n用户问题：{human}\"\n\nchain = prompt | RunnableLambda(speak)\nchain.invoke({\"topic\": topic, \"question\": question})",
+      "fields": [
+        {
+          "name": "topic",
+          "label": "主题",
+          "placeholder": "微服务"
+        },
+        {
+          "name": "question",
+          "label": "问题",
+          "placeholder": "为什么要拆开？"
+        }
+      ]
+    },
+    {
+      "id": "tool",
+      "title": "3. 注册并调用工具",
+      "lead": "@tool 把一个普通函数登记成工具。工具有名称、说明和参数。invoke 传入参数后，执行的是这个函数本身。模型以后可以按名称要求程序调用它。",
+      "code": "@tool\ndef add_numbers(text: str) -> str:\n    \"\"\"把用逗号分开的数字相加。\"\"\"\n    ...\n\nadd_numbers.invoke({\"text\": text})",
+      "fields": [
+        {
+          "name": "text",
+          "label": "要相加的数字",
+          "placeholder": "12, 30, 8"
+        }
+      ]
+    }
+  ]
+}

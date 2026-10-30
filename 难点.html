@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <script src="public-read.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>任沛新 · 开发难点</title>
+  <meta name="description" content="开发 AIAPP 时，在本工作区向智能体提出的问题。按主题归类并缩短措辞。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23141210'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-size='36' fill='%23f0d2cb' font-family='serif'%3E任%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip" href="#list">进入难点列表</a>
+  <div class="shell">
+    <aside class="rail">
+      <p class="seal" aria-hidden="true">任</p>
+      <h1>任沛新</h1>
+      <p class="who">男 · 24 岁 · 汉族<br>河北邯郸</p>
+      <p class="who">格拉斯哥大学<br>MSc in Computing Science<br>Distinction</p>
+      <div class="switch" role="navigation" aria-label="切换界面">
+        <a href="index.html">个人简历</a>
+        <a href="学习.html">学习笔记</a>
+        <a href="词汇.html">词汇笔记</a>
+        <a href="算法.html">算法习题</a>
+        <a href="知识.html">知识库</a>
+        <a href="本人.html">本人对话</a>
+        <a href="科技.html">科技日览</a>
+        <a href="难点.html" class="is-active" aria-current="page">开发难点</a>
+      </div>
+      <div class="contact">
+        <p><a href="mailto:renpeixin0924@icloud.com">renpeixin0924@icloud.com</a></p>
+        <p><a href="tel:13180500889">13180500889</a></p>
+        <p class="aim">求职 · 北京<br>人工智能、数据分析</p>
+      </div>
+    </aside>
+    <main id="content">
+      <section>
+        <p class="kicker">开发难点</p>
+        <h2>开发这个项目时问过的问题</h2>
+        <p class="section-note">这些条目只收录技术问题。日常问答留在对话里。收集程序按主题归类，并缩短措辞。笔记保存在 <code>笔记/难点.md</code>。</p>
+        <p class="shown" id="summary">正在读取。</p>
+        <div id="list"></div>
+      </section>
+    </main>
+  </div>
+  <script>
+    const summary = document.querySelector("#summary");
+    const list = document.querySelector("#list");
+
+    function line(item) {
+      const row = document.createElement("li");
+      const title = document.createElement("strong");
+      title.textContent = item.title;
+      const meta = document.createElement("span");
+      const when = item.asked_at || "时间待补";
+      const times = item.count > 1 ? ` · 出现 ${item.count} 次` : "";
+      meta.textContent = when + times;
+      row.append(title, meta);
+      return row;
+    }
+
+    fetch("/api/difficulties")
+      .then((response) => response.json())
+      .then((payload) => {
+        const groups = payload.groups || [];
+        const asked = groups.reduce(
+          (total, group) => total + group.items.reduce((sum, item) => sum + (item.count || 1), 0),
+          0,
+        );
+        summary.textContent = `问过 ${asked} 次，收成 ${payload.total || 0} 条。`;
+        list.replaceChildren();
+        if (!groups.length) {
+          const empty = document.createElement("p");
+          empty.id = "empty";
+          empty.textContent = "提问之后，条目会出现在这里。";
+          list.append(empty);
+          return;
+        }
+        for (const group of groups) {
+          const section = document.createElement("section");
+          section.className = "group";
+          const heading = document.createElement("h3");
+          heading.textContent = group.name;
+          const note = document.createElement("p");
+          note.className = "section-note";
+          note.textContent = group.note || "";
+          const items = document.createElement("ul");
+          items.className = "difficulty-list";
+          for (const item of group.items) {
+            items.append(line(item));
+          }
+          section.append(heading, note, items);
+          list.append(section);
+        }
+      })
+      .catch(() => {
+        summary.textContent = "读取开发难点时出现问题。请确认页面服务已启动。";
+      });
+  </script>
+  <script src="back.js?v=2"></script>
+</body>
+</html>
