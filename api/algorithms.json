@@ -1,12 +1,13 @@
 {
   "groups": [
     {
+      "id": 1,
       "name": "模拟",
       "note": "按车辆顺序推进时间，用周期取余跳到下一趟绿灯。",
       "problems": [
         {
+          "id": 1,
           "name": "路口等待时间",
-          "status": "未掌握",
           "asked_at": "2026-10-25 05:04",
           "algorithm": "分车道模拟，用周期取余定位绿灯",
           "summary": "四条车道各自排队。每辆车取到达时刻和本车道空闲时刻里较晚的那个，红灯就改到本方向下一趟绿灯开始，通行固定 1 秒。",
@@ -15,17 +16,19 @@
           "example": "```text\n输入\n3\n5\nE,S,W,N\n0,1,3,6\n\n输出\n9,9\n```\n\n周期是 8 秒。东西方向 0 到 3 秒红灯、3 到 8 秒绿灯。南北方向 0 到 3 秒绿灯、3 到 8 秒红灯。\n\n- E 在 0 到达。东西方向红灯，3 进入，4 离开。\n- S 在 1 到达。南北方向绿灯，1 进入，2 离开。\n- W 在 3 到达。东西方向绿灯刚开始，车道空闲，3 进入，4 离开。W 与 E 分属两条车道，同一秒可以各自进入。\n- N 在 6 到达。6 在周期内的位置是 6，南北方向处于红灯，下一趟绿灯在 8。8 进入，9 离开。\n\n总耗时 9 − 0 = 9。最后离开时刻是 9。\n\n```text\n输入\n2\n3\nE,E,S\n1,3,4\n\n输出\n5,6\n```\n\n周期是 5 秒。东西方向绿灯是 [2, 5)。\n\n- 第一辆 E 在 1 到达，红灯持续到 2，2 进入，3 离开。\n- 第二辆 E 在 3 到达，本车道也在 3 空闲，3 仍是绿灯，3 进入，4 离开。\n- S 在 4 到达。4 对南北方向是红灯，下一趟绿灯在 5，5 进入，6 离开。\n\n总耗时 6 − 1 = 5。最后离开时刻是 6。\n\n```text\n输入\n4\n2\nE,E,E\n0,1,2\n\n输出\n11,11\n```\n\n周期是 6 秒。东西方向绿灯是 [4, 6)，下一趟是 [10, 12)。\n\n- 第一辆在 0 到达，4 进入，5 离开。\n- 第二辆最早在 5 占用车道，5 仍是绿灯，5 进入，6 离开。\n- 第三辆最早在 6 占用车道，6 已是红灯，10 进入，11 离开。\n\n总耗时 11 − 0 = 11。最后离开时刻是 11。",
           "complexity": "n 辆车，每辆车做常数次取余和比较。时间复杂度是 O(n)。四条车道各保存一个空闲时刻，空间复杂度是 O(1)。",
           "sources": "华为 OD 机试「路口等待时间」。公开题解把东西方向绿灯时长写成 G，本题参数名是 W，灯色区间和输出含义一致。三组例子来自该题解。http://www.mrgr.cn/news/6749",
-          "repo": "`agent/algorithms.py` 的 `calculate_wait_time` 按上述规则返回 `[总耗时, 离开时刻]`。算法页通过 `/api/algorithms` 读取本笔记。"
+          "repo": "`agent/algorithms.py` 的 `calculate_wait_time` 按上述规则返回 `[总耗时, 离开时刻]`。算法页通过 `/api/algorithms` 读取本笔记。",
+          "status": "未掌握"
         }
       ]
     },
     {
+      "id": 2,
       "name": "线性规划",
       "note": "把原问题的约束和变量对调，写出对偶规划。",
       "problems": [
         {
+          "id": 2,
           "name": "由线性规划写出对偶",
-          "status": "未掌握",
           "asked_at": "2026-10-30 18:47",
           "algorithm": "按约束与变量的对应表构造对偶",
           "summary": "原问题每个约束变成一个对偶变量，每个变量变成一个对偶约束，系数矩阵取转置，目标和右端互换。",
@@ -34,17 +37,19 @@
           "example": "```text\n标准形式\nmax\ncosts = 3,5\nconstraints = (1,0)<=4 ; (0,2)<=12 ; (3,2)<=18\nsigns = >=,>=\n\n对偶\nmin\ncosts = 4,12,18\nconstraints = (1,0,3)>=3 ; (0,2,2)>=5\nsigns = >=,>=,>=\n```\n\n三个 ≤ 约束给出三个 ≥ 0 的对偶变量。两列给出 y1 + 3 y3 ≥ 3 和 2 y2 + 2 y3 ≥ 5。\n\n```text\n含等式与自由变量\nmax\ncosts = 3,2\nconstraints = (1,1)<=4 ; (1,-1)>=1\nsigns = >=,free\n\n对偶\nmin\ncosts = 4,1\nconstraints = (1,1)>=3 ; (1,-1)=2\nsigns = >=,<=\n```\n\n第一条 ≤ 对应 y1 ≥ 0。第二条 ≥ 对应 y2 ≤ 0。x1 ≥ 0 对应第一个对偶约束 ≥ 3。x2 可取任意实数，对应 y1 - y2 = 2。",
           "complexity": "m 条约束、n 个变量时，抄写转置要访问每一个系数。构造对偶的时间复杂度和空间复杂度都是 O(mn)。",
           "sources": "维基百科 Dual linear program。标准形式 max c·x、Ax ≤ b、x ≥ 0 的对偶是 min b·y、A 转置 y ≥ c、y ≥ 0。约束与变量的符号对应按同一页的构造规则。https://en.wikipedia.org/wiki/Dual_linear_program",
-          "repo": "`agent/algorithms.py` 的 `dual_linear_program` 返回 `(对偶方向, 对偶目标系数, 对偶约束, 对偶变量符号)`。上面两组例子与该函数的返回值一致。"
+          "repo": "`agent/algorithms.py` 的 `dual_linear_program` 返回 `(对偶方向, 对偶目标系数, 对偶约束, 对偶变量符号)`。上面两组例子与该函数的返回值一致。",
+          "status": "未掌握"
         }
       ]
     },
     {
+      "id": 3,
       "name": "字符串匹配",
       "note": "先根据模式串算出前缀函数，再让文本的下标只向前移动。",
       "problems": [
         {
+          "id": 3,
           "name": "用 KMP 查找模式串",
-          "status": "未掌握",
           "asked_at": "2026-10-30 19:23",
           "algorithm": "KMP，用前缀函数决定失配后模式串从哪里继续比较",
           "summary": "在文本里找出模式串每一次出现的起始下标。模式串先算出前缀函数，扫描文本时已经对上的部分可以沿用。",
@@ -53,7 +58,8 @@
           "example": "```text\n模式串\nABABCABAB\n\n前缀函数\n0,0,1,2,0,1,2,3,4\n\n文本\nABABDABACDABABCABAB\n\n出现位置\n10\n```\n\n模式串前 4 个字符 ABAB 的后缀 AB 等于它的前缀 AB，所以 π[3] = 2。整段 ABABCABAB 的后缀 ABAB 等于前缀 ABAB，所以 π[8] = 4。文本下标 4 的 D 对不上模式串的 C 时，已匹配长度从 4 改到 π[3] = 2，再用 D 比较。下一次完整对上发生在文本下标 10 到 18。\n\n```text\n模式串\nAA\n\n前缀函数\n0,1\n\n文本\nAAA\n\n出现位置\n0,1\n```\n\n第一次在下标 0 对上 AA 后，已匹配长度改成 π[1] = 1。文本最后一个 A 接在这个长度后面，又形成一次出现，起始下标是 1。",
           "complexity": "前缀函数每个模式串下标最多进入一次，已匹配长度每次回退都变小，计算前缀函数的时间是 O(m)。扫描文本时下标只增加，已匹配长度的回退总量不超过 n，匹配时间是 O(n)。合计时间复杂度 O(n + m)。前缀函数占用 O(m) 空间。",
           "sources": "Knuth、Morris、Pratt 1977 年的论文《Fast Pattern Matching in Strings》给出这个线性时间的匹配方法。https://doi.org/10.1137/0206024\n维基百科 Knuth–Morris–Pratt algorithm：用前缀函数在失配后继续比较，文本下标只向前移动。https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm",
-          "repo": "`agent/algorithms.py` 的 `kmp_prefix` 返回前缀函数，`kmp_search` 返回出现位置列表。上面两组例子与这两个函数的返回值一致。"
+          "repo": "`agent/algorithms.py` 的 `kmp_prefix` 返回前缀函数，`kmp_search` 返回出现位置列表。上面两组例子与这两个函数的返回值一致。",
+          "status": "未掌握"
         }
       ]
     }

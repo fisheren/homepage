@@ -1,0 +1,254 @@
+{
+  "profile": {
+    "name": "任沛新",
+    "gender": "男",
+    "age": "24",
+    "ethnicity": "汉族",
+    "hometown": "河北邯郸",
+    "height": "180 cm",
+    "weight": "90 kg",
+    "email": "renpeixin0924@icloud.com",
+    "phone": "13180500889",
+    "job": "人工智能相关、数据分析",
+    "city": "北京",
+    "school": "格拉斯哥大学",
+    "degree": "MSc in Computing Science",
+    "honor": "Distinction"
+  },
+  "sections": [
+    {
+      "name": "个人简介",
+      "items": [
+        {
+          "id": 1,
+          "title": "硕士",
+          "subtitle": "",
+          "period": "",
+          "body": "硕士毕业于英国**格拉斯哥大学**，授予 **Master of Science in Computing Science with Distinction**，GPA **18/22**。"
+        },
+        {
+          "id": 2,
+          "title": "本科",
+          "subtitle": "",
+          "period": "",
+          "body": "本科毕业于**北京物资学院**，专业为**数据科学与大数据技术**，GPA **3.44/4.0**，加权平均分 **86/100**。"
+        }
+      ]
+    },
+    {
+      "name": "亮点",
+      "items": [
+        {
+          "id": 3,
+          "title": "硕士学位",
+          "subtitle": "MSc",
+          "period": "",
+          "body": "Computing Science"
+        },
+        {
+          "id": 4,
+          "title": "学位等级",
+          "subtitle": "Distinction",
+          "period": "",
+          "body": "格拉斯哥大学"
+        },
+        {
+          "id": 5,
+          "title": "本科成绩",
+          "subtitle": "3.44",
+          "period": "",
+          "body": "GPA / 4.0"
+        }
+      ]
+    },
+    {
+      "name": "自我评价",
+      "items": [
+        {
+          "id": 6,
+          "title": "自我评价",
+          "subtitle": "",
+          "period": "",
+          "body": "性格上，我做事踏实，接到任务后先确认要求和完成时间，再按步骤实现。集体活动中服从安排，能够配合团队把事情做完。\n\n能力上，我具备应用开发与数据处理能力。熟悉 **Python**、**Java** 和 **Django**，能独立完成需求分析、编码、测试和文档。我具备较强的抗压能力，也能够把所学方法用到可运行的系统上。"
+        }
+      ]
+    },
+    {
+      "name": "技能特长",
+      "items": [
+        {
+          "id": 7,
+          "title": "编程语言",
+          "subtitle": "",
+          "period": "",
+          "body": "**Python**（精通）。**Java**（熟练，具备面向对象编程基础）。"
+        },
+        {
+          "id": 8,
+          "title": "数据分析",
+          "subtitle": "",
+          "period": "",
+          "body": "熟练使用 **Pandas**、**NumPy** 进行数据清洗和数据处理。熟练使用 **Matplotlib**、**Seaborn** 进行数据可视化。"
+        },
+        {
+          "id": 9,
+          "title": "机器学习与人工智能",
+          "subtitle": "",
+          "period": "",
+          "body": "熟练使用 **PyTorch** 搭建与训练模型。掌握常见监督学习和无监督学习方法。了解 **Transformer** 架构。"
+        },
+        {
+          "id": 10,
+          "title": "网站开发",
+          "subtitle": "",
+          "period": "",
+          "body": "熟练使用 **Django**、**Streamlit** 搭建数据驱动网站。能够使用 **Bootstrap** 进行页面布局和简单界面设计。"
+        },
+        {
+          "id": 11,
+          "title": "数据库",
+          "subtitle": "",
+          "period": "",
+          "body": "熟悉 **MySQL**，能够进行基本数据库设计、SQL 查询和数据管理，理解关系型数据库的基本结构。"
+        },
+        {
+          "id": 12,
+          "title": "人工智能应用",
+          "subtitle": "",
+          "period": "",
+          "body": "能够使用人工智能应用完成多种任务，包括编写脚本和插件。"
+        },
+        {
+          "id": 13,
+          "title": "其他",
+          "subtitle": "",
+          "period": "",
+          "body": "能够使用 **Git** 进行版本控制，具备 **Linux** 基本操作能力。"
+        }
+      ]
+    },
+    {
+      "name": "教育背景",
+      "items": [
+        {
+          "id": 14,
+          "title": "格拉斯哥大学",
+          "subtitle": "**MSc in Computing Science with Distinction** · 2026 年 QS 排名 79",
+          "period": "2025.09 — 2026.09 · 已毕业",
+          "body": "相关课程：机器学习、自然语言处理、信息检索。\n\n毕业论文：使用 2 个公开数据集，训练、微调并评估多个单模态（文本或音频）预训练模型，例如 BERT，以及双模态融合模型。比较不同融合方式得到的结果，并在不同数据集上对比单模态模型是否出现明显提升或下降。\n\n成绩：加权平均分 **18/22**，学位等级 **Distinction**。"
+        },
+        {
+          "id": 15,
+          "title": "北京物资学院",
+          "subtitle": "**数据科学与大数据技术**",
+          "period": "2020.09 — 2024.06 · 学士",
+          "body": "相关课程：机器学习、数据分析、深度学习、数据结构、数据采集与清洗、自然语言处理。\n\n课程项目：毕业论文使用 PyTorch 实现包括 Informer 在内的多个时间序列预测模型，答辩获得优秀。\n\n成绩：GPA 3.44/4.0，加权平均分 86/100。"
+        }
+      ]
+    },
+    {
+      "name": "校园经历",
+      "items": [
+        {
+          "id": 16,
+          "title": "作为合唱方阵成员，参与筹备中国共产党成立 100 周年北京市庆祝活动。",
+          "subtitle": "",
+          "period": "2021.07",
+          "body": ""
+        },
+        {
+          "id": 17,
+          "title": "加入校园大数据协会，担任竞赛部副部长。主要职责是鼓励同学参加竞赛、组织竞赛。",
+          "subtitle": "",
+          "period": "2021.09",
+          "body": ""
+        },
+        {
+          "id": 18,
+          "title": "组织并参与「第一届北物大数据建模竞赛」，获得二等奖。",
+          "subtitle": "",
+          "period": "2022.05",
+          "body": ""
+        },
+        {
+          "id": 19,
+          "title": "作为技术负责人参与 APMCM 亚太竞赛，获得全国三等奖。负责数据的处理，以及机器学习模型的选择与改进。",
+          "subtitle": "",
+          "period": "2023.01.13",
+          "body": ""
+        }
+      ]
+    },
+    {
+      "name": "工作经历",
+      "items": [
+        {
+          "id": 20,
+          "title": "浙江大学曹昂研究员课题组",
+          "subtitle": "科研助理",
+          "period": "2024.09 — 2025.06",
+          "body": "- 独自负责开发团队展示网站，使用 Django 进行整体架构设计与核心功能实现。\n- 协助导师完善数据库网站，负责使用 Streamlit 完善 DigCat 网站的文件上传功能。\n- 辅助课题组内成员进行论文、实验相关的数据可视化。"
+        }
+      ]
+    },
+    {
+      "name": "项目经历",
+      "items": [
+        {
+          "id": 21,
+          "title": "团队展示网站",
+          "subtitle": "Django · MySQL · Bootstrap",
+          "period": "",
+          "body": "使用 Django 为科研团队及成员搭建信息展示网站，实现成员信息、科研成果、博客文章的增删改查。使用 MySQL 管理数据，前端采用 Bootstrap 进行页面布局与响应式设计。优化数据库查询和页面渲染，提高访问效率。"
+        },
+        {
+          "id": 22,
+          "title": "营养数据跟踪网站",
+          "subtitle": "Django · 课程项目",
+          "period": "",
+          "body": "使用 Django 搭建能够上传、统计、可视化用户营养摄入数据的网站，支持多用户数据管理和图表展示。在课程项目中负责整体架构设计、功能实现和前端页面优化。"
+        }
+      ]
+    },
+    {
+      "name": "奖励与证书",
+      "items": [
+        {
+          "id": 23,
+          "title": "APMCM 亚太数学建模大赛三等奖",
+          "subtitle": "",
+          "period": "2023.01.13",
+          "body": ""
+        },
+        {
+          "id": 24,
+          "title": "第六届全国大学生艺术展演活动甲组一等奖",
+          "subtitle": "",
+          "period": "2021.05.10",
+          "body": ""
+        },
+        {
+          "id": 25,
+          "title": "北京物资学院二等美育奖学金",
+          "subtitle": "",
+          "period": "",
+          "body": ""
+        },
+        {
+          "id": 26,
+          "title": "全国大学英语六级证书",
+          "subtitle": "",
+          "period": "",
+          "body": ""
+        },
+        {
+          "id": 27,
+          "title": "全国计算机等级考试二级证书（Python）",
+          "subtitle": "",
+          "period": "",
+          "body": ""
+        }
+      ]
+    }
+  ]
+}

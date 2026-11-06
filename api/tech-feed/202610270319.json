@@ -1,0 +1,123 @@
+{
+  "when": "2026-10-27 03:19",
+  "summary": "今天科技日览，我按条目说四条。\n\n哔哩 10/26 中国秀，彭博社中英字幕，巴西大选冲击新兴市场，美联储欧央行日央行密集议息，全球科技财报季开启，中国 AI 模型追赶前沿，亚洲 IPO 节奏放缓，播放 225。\n\nGithub 96,000 颗星砸出来的 MCP 圣经，你收藏那 500 个 AI 神器那条，播放 27。\n\n5090 显卡本地部署 DeepSeek V4.1 flash，踩坑实录 25 token/s，播放 882。\n\nGitHub wheresryan22/anatomy，星标 20999，JavaScript，agent skill 做 isometric 交互插图那款。",
+  "items": [
+    {
+      "source": "哔哩哔哩",
+      "title": "10/26中国秀，巴西大选冲击新兴市场，美联储欧央行日央行密集议息，全球科技财报季开启，中国AI模型追赶前沿，亚洲IPO节奏放缓 | 彭博社 | 中英字幕",
+      "url": "https://www.bilibili.com/video/BV1own96AEeW",
+      "detail": "Farah财经 · 2026-10-26 · 播放 225",
+      "id": "BV1own96AEeW",
+      "comment": "这条我扫了一眼。播放 225，先当背景音。"
+    },
+    {
+      "source": "哔哩哔哩",
+      "title": "Github 96,000 颗星砸出来的 MCP 圣经：你收藏的 500 个“AI 神器”",
+      "url": "https://www.bilibili.com/video/BV1FcnZ6nEXk",
+      "detail": "小华同学ai · 2026-10-26 · 播放 27",
+      "id": "BV1FcnZ6nEXk",
+      "comment": "九万六千星那个 MCP 合集我记下了。播放才 27，可能标题太长。"
+    },
+    {
+      "source": "哔哩哔哩",
+      "title": "【4K先导预告】《复杂系统科学演化史》概念宣传片｜从《易经》与牛顿，到三体混沌、分形与万物涌现",
+      "url": "https://www.bilibili.com/video/BV1B2nZ6UEpu",
+      "detail": "倾东海N · 2026-10-26 · 播放 69",
+      "id": "BV1B2nZ6UEpu",
+      "comment": "复杂系统加易经那条预告我点开了。播放 69，概念片嘛先收藏。"
+    },
+    {
+      "source": "哔哩哔哩",
+      "title": "5090显卡本地部署DeepSeek V4.1 flash！踩坑实录：25token/s",
+      "url": "https://www.bilibili.com/video/BV1JKHF6REAL",
+      "detail": "AI观模者 · 2026-10-27 · 播放 882",
+      "id": "BV1JKHF6REAL",
+      "comment": "5090 跑 DeepSeek 25 token/s 这条播放量 882。本地部署的人应该都在看这踩坑。"
+    },
+    {
+      "source": "哔哩哔哩",
+      "title": "【中英双语字幕】我的 AI 编程工作流真的能跑：Chris Titus 拆解日常开发全流程",
+      "url": "https://www.bilibili.com/video/BV1pHnf6RE3n",
+      "detail": "混子州 · 2026-10-27 · 播放 1",
+      "id": "BV1pHnf6RE3n",
+      "comment": "Chris Titus 工作流那条播放 1。中英字幕对我有用，晚点再看。"
+    },
+    {
+      "source": "哔哩哔哩",
+      "title": "过去20-30年法国等欧洲国家科技发展甚至比伊朗/韩国还差、欧洲新兴技术落后令人震惊(双尾彗星10/23）",
+      "url": "https://www.bilibili.com/video/BV1SzHK6xEJy",
+      "detail": "斯卡文档案地道二号 · 2026-10-24 · 播放 1967",
+      "id": "BV1SzHK6xEJy",
+      "comment": "欧洲科技比伊朗韩国还惨？播放 1967 说明争议挺大。双尾彗星 10/23 的我还没看。"
+    },
+    {
+      "source": "GitHub",
+      "title": "wheresryan22/anatomy",
+      "url": "https://github.com/wheresryan22/anatomy",
+      "detail": "星标 20999 · JavaScript · 2026-10-18 · An agent skill for creating detailed, interactive isometric illustrations of rea",
+      "id": "wheresryan22/anatomy",
+      "comment": "anatomy 两万多星，JavaScript 做等距解剖图。agent skill 这个方向我搜搜。"
+    },
+    {
+      "source": "GitHub",
+      "title": "tangency-labs/solidcraft",
+      "url": "https://github.com/tangency-labs/solidcraft",
+      "detail": "星标 10759 · Rust · 2026-10-26 · SolidCraft: an open-source parametric 3D CAD application built in pure Rust. Des",
+      "id": "tangency-labs/solidcraft",
+      "comment": "SolidCraft 纯 Rust 参数化 CAD，星标一万出头。和平时用的那些不是一路。"
+    },
+    {
+      "source": "GitHub",
+      "title": "onehumanbeing/esp32-iphone-agent",
+      "url": "https://github.com/onehumanbeing/esp32-iphone-agent",
+      "detail": "星标 3938 · C · 2026-10-22 · Let an AI model use a real iPhone with a $7 ESP32: AirPlay eyes, USB HID hands,",
+      "id": "onehumanbeing/esp32-iphone-agent",
+      "comment": "七块钱 ESP32 让 AI 摸真 iPhone，星标三千九。玩法有点野。"
+    },
+    {
+      "source": "GitHub",
+      "title": "aicodeking/leanrea",
+      "url": "https://github.com/aicodeking/leanrea",
+      "detail": "星标 2915 · Python · 2026-10-19 · One 8 KB skill that replaces REA (Reverse Engineer Anything): plain CLI tools, n",
+      "id": "aicodeking/leanrea",
+      "comment": "leanrea 八 KB 替代 REA，星标两千九 Python。plain CLI 我感兴趣。"
+    }
+  ],
+  "traces": [
+    "03:19:12 开始今天的科技搜索，目标 10 条",
+    "03:19:12 搜索哔哩哔哩「新兴科技」，按发布时间，收到 8 条",
+    "03:19:12 搜索哔哩哔哩「GitHub 开源项目」，按发布时间，收到 8 条",
+    "03:19:12 搜索哔哩哔哩「人工智能 新概念」，按发布时间，收到 8 条",
+    "03:19:12 搜索哔哩哔哩「大模型 开源」，按发布时间，收到 8 条",
+    "03:19:12 搜索哔哩哔哩「AI Agent」，按发布时间，收到 8 条",
+    "03:19:12 搜索 GitHub「created:>2026-10-06 stars:>20 (AI OR LLM OR agent OR RAG OR MCP)」，按星标，收到 8 条",
+    "03:19:12 留下 哔哩哔哩 BV1own96AEeW 《10/26中国秀，巴西大选冲击新兴市场，美联储欧央行日央行密集议息，全球科技财报季开启，中国AI模型追赶前沿，亚洲IPO节奏放缓 | 彭博社 | 中英字幕》",
+    "03:19:12 留下 哔哩哔哩 BV1FcnZ6nEXk 《Github 96,000 颗星砸出来的 MCP 圣经：你收藏的 500 个“AI 神器”》",
+    "03:19:12 留下 哔哩哔哩 BV1B2nZ6UEpu 《【4K先导预告】《复杂系统科学演化史》概念宣传片｜从《易经》与牛顿，到三体混沌、分形与万物涌现》",
+    "03:19:12 留下 哔哩哔哩 BV1JKHF6REAL 《5090显卡本地部署DeepSeek V4.1 flash！踩坑实录：25token/s》",
+    "03:19:12 留下 哔哩哔哩 BV1pHnf6RE3n 《【中英双语字幕】我的 AI 编程工作流真的能跑：Chris Titus 拆解日常开发全流程》",
+    "03:19:12 留下 哔哩哔哩 BV1SzHK6xEJy 《过去20-30年法国等欧洲国家科技发展甚至比伊朗/韩国还差、欧洲新兴技术落后令人震惊(双尾彗星10/23）》",
+    "03:19:12 留下 GitHub wheresryan22/anatomy 《wheresryan22/anatomy》",
+    "03:19:12 留下 GitHub tangency-labs/solidcraft 《tangency-labs/solidcraft》",
+    "03:19:12 留下 GitHub onehumanbeing/esp32-iphone-agent 《onehumanbeing/esp32-iphone-agent》",
+    "03:19:12 留下 GitHub aicodeking/leanrea 《aicodeking/leanrea》",
+    "03:19:12 请个人助手根据这 10 条写总结",
+    "03:19:12 个人助手写完总结",
+    "03:19:12 写入 笔记/科技日览.md",
+    "03:25:42 请任按本人说明的口吻给这 10 条写评论",
+    "03:25:42 任写完 10 条评论",
+    "03:25:42 评论写入 笔记/科技日览.md",
+    "03:26:28 请任按本人说明的口吻给这 10 条写评论",
+    "03:26:28 任写完 10 条评论",
+    "03:26:28 评论写入 笔记/科技日览.md"
+  ],
+  "path": "笔记/科技日览.md",
+  "intro": "每天留下大约十条，范围是新兴科技、GitHub 项目和最近的新概念。视频按播放、弹幕、评论、点赞、收藏和发布时间一起排序，仓库按星标、复刻、关注和创建时间一起排序。有字幕就读字幕，没有字幕就听前 8 分钟并转成文字，仓库读 README。任根据读到的正文写总结和评论。搜索、留下、跳过和写评论都记在当天的留痕里。本人对话会读最新一份总结和评论。",
+  "history": [
+    "2026-10-28 04:15",
+    "2026-10-27 03:49",
+    "2026-10-27 03:46",
+    "2026-10-27 03:19",
+    "2026-10-27 03:14"
+  ]
+}
