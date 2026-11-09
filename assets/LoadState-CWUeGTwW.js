@@ -1,0 +1,1 @@
+import{S as e,V as t,k as n,x as r}from"./index-CQ_4w28J.js";var i={key:0,class:`load-state is-error`,role:`alert`},a={key:1,class:`load-state`},o={__name:`LoadState`,props:{loading:{type:Boolean,default:!1},error:{type:String,default:``}},setup(o){return(s,c)=>o.error?(n(),e(`p`,i,t(o.error),1)):o.loading?(n(),e(`p`,a,`正在读取。`)):r(``,!0)}};export{o as t};

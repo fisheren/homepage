@@ -1942,6 +1942,19 @@
               "related": "AutoGen、任务编排、工具调用、智能体系统",
               "sources": "LangChain 多智能体文档：主管把子智能体当作工具调用，交接用工具调用更新当前智能体，路由器先分类再分发。https://docs.langchain.com/oss/python/langchain/multi-agent\nLangChain 子智能体文档：路由都经过主管，子智能体把结果交回主管，主管可以在一轮里调用多个子智能体。https://docs.langchain.com/oss/python/langchain/multi-agent/subagents\nLangChain 交接文档：工具调用更新 `active_agent` 这类状态，随后由另一位智能体继续。这个名称来自 OpenAI 的 Swarm。https://docs.langchain.com/oss/python/langchain/multi-agent/handoffs\nAutoGen 交接说明：用一次特殊工具调用把任务委托给其他智能体。客服例子包含分诊、退款、销售和人工。https://microsoft.github.io/autogen/stable/user-guide/core-user-guide/design-patterns/handoffs.html\nMetaGPT 论文：按软件开发工序传递需求文档、系统设计、任务、代码和测试。https://arxiv.org/abs/2308.00352",
               "status": "未掌握"
+            },
+            {
+              "id": 598,
+              "name": "智能体功能设计",
+              "english": "Agent",
+              "starred": true,
+              "summary": "描述智能体应该具备哪些功能",
+              "points": "对话入口：网页、接口或消息渠道。能发送文字，能看到助手回复，能中断正在进行的一轮。\n多轮会话：同一条会话保留前文。新开一轮时，旧会话仍然可以找回。\n身份与权限：知道是谁在问。不同人看到不同会话，能调用的工具也不同。\n过程可见：显示当前在想、在调用哪个工具、工具返回了什么。长任务能看到进度。\n人工确认 ：付款、删除、对外发送这类动作，需要等用户确认。\n结果形态：除了文字，还能给出链接、表格、文件或结构化结果\n\n#### 智能体自己运转需要的功能\n**模型接入**：统一调用一个或多个大模型。管理密钥、超时、重试、费用和模型切换。\n**决策循环**：读取消息，决定直接回答还是调用工具，把工具结果写回，再决定下一步，直到结束或达到步数上限。\n**工具目录**：每个工具有名称、说明、参数格式和执行函数。模型只负责点名，程序负责执行。\n**规划与编排**：简单任务由模型逐步决定。步骤固定的任务写成工作流：先做什么、失败后走哪条分支、哪些步骤可以并行。\n**短期记忆**：当前会话的消息窗口。窗口太长时做摘要，避免把全部历史都塞进一次请求。\n**长期记忆**：跨会话记住用户偏好、已经确认的事实。要能写入、读出和过期。\n**资料检索**：把文档切成段落并建立索引。提问时取出相关段落，连同出处一起交给模型。这就是 RAG。\n**结构化输出**：需要程序继续处理时，要求模型按约定格式返回，并在格式不对时重试。",
+              "example": "",
+              "pitfall": "",
+              "related": "",
+              "sources": "LangChain 智能体文档：智能体循环读取消息、决定调用工具或结束，并把工具结果写回。https://docs.langchain.com/oss/python/langchain/agents",
+              "status": "未掌握"
             }
           ]
         },
