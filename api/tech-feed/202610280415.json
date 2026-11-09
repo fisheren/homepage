@@ -1,6 +1,7 @@
 {
   "when": "2026-10-28 04:15",
   "summary": "今天读了几条科技内容，挺有意思的。先说两个，后面再说。\n\nDeepSeek开源了推理框架DeepInfo，让DeepSeek跑得更快更省。这个框架把GPU和CPU分工合作，流水线作业，减少空转时间，提高效率。另外，DeepInfo还教你怎么用AI赚钱，一张卡一天赚6100块，挺吸引人的。\n\n另一个是kazumi，追番神器，支持各种设备，免费无广告，体验很好。",
+  "keeper": "",
   "items": [
     {
       "source": "哔哩哔哩",
@@ -9,7 +10,6 @@
       "detail": "差评前沿部 · 2026-10-22 · 播放 829698 · 弹幕 89 · 评论 1610 · 点赞 51366 · 收藏 22427 · 投币 1070 · 分享 2004",
       "id": "BV1mTn16oEGv",
       "reading": "转写全片 4 分钟，1569 字",
-      "excerpt": "不是梁文峰你怎么什么都往外掏啊模型开源就算了什么叫推理框架内部账本全部公开了明白着告诉你手把手跟上的话一张卡一天就能收米6100块在API白菜家的前提下一张显卡一个小时还能赚个253块要知道即使是现在最贵的B300租一个小时也就60块纯纯的印钞机没错这次梁文峰的平期又被调整到了良盛因为他是真想教会大家怎么用AI来赚钱别…",
       "comment": "梁叔叔这次真的把推理框架内部账本都公开了，太厉害了！开源精神满分。"
     },
     {
@@ -19,7 +19,6 @@
       "detail": "卡普迪姆 · 2026-10-13 · 播放 1040962 · 弹幕 726 · 评论 2003 · 点赞 82673 · 收藏 182458 · 投币 41612 · 分享 9735",
       "id": "BV1VZWc6dECG",
       "reading": "转写前 8 分钟，全片 55 分钟，2417 字，送进总结 2201 字",
-      "excerpt": "如果你對AI一俏不通又想一口氣補上這一集就是為你準備的我是阿姨這是阿姨從零開始的AI學習第一季合集13期將近一個小時從AI這三年發生了什麼開始裝上第一個agent讓它寫程序再算清楚它花了多少錢最後回答一個問題AI都會了我們還學什麼不想從頭看也沒關係下面進度調上點哪一期就跳到哪一期好我們開始最近AI很火我也想學就上網搜了…",
       "comment": "这个AI学习系列从基础讲到应用，适合零基础入门。"
     },
     {
@@ -29,7 +28,6 @@
       "detail": "小白debug · 2026-10-27 · 播放 7485 · 弹幕 39 · 评论 48 · 点赞 539 · 收藏 350 · 投币 238 · 分享 48",
       "id": "BV1E4no6CEpG",
       "reading": "转写前 8 分钟，全片 11 分钟，2982 字，送进总结 2201 字",
-      "excerpt": "Deep Info是什麼?它為什麼能讓Deep Seek跑得更快更省?去年年初Deep Seek阿姨開源的時候我以為你良書只是想上教科書但這幾天開源的Deep Info讓我感覺你良書其實是想上歷史書這又是一門開源天階工法使用了Deep Info的線上系統單一集群可以做到一天吞吐155萬億的token按撥股價折算平均每卡…",
       "comment": "DeepInfer优化了GPU和CPU的协作，让DeepSeek跑得更快更省。"
     },
     {
@@ -39,7 +37,6 @@
       "detail": "十生产力 · 2026-10-07 · 播放 85731 · 弹幕 3 · 评论 66 · 点赞 5376 · 收藏 13701 · 投币 1348 · 分享 268",
       "id": "BV1FuH16nEfz",
       "reading": "转写全片 2 分钟，704 字",
-      "excerpt": "据说这是追翻软件的最高低伤可以让你从口袋里的小屏一路追到电脑上的大屏并且同时支持各种设备的使用它就是最近GateHUB上非常火的开源项目卡组米目前已经有3万多颗星了支持刘媒体在线观看支持弹幕支持实时超分辨率等而且它跟普通的视频软件还不太一样它本身并不拖拖管这些动漫内容核心是通过自定义规则去获取第三方站点的信息和播放内容…",
       "comment": "Kazumi软件支持多平台追番，功能强大，体验不错。"
     },
     {
@@ -49,7 +46,6 @@
       "detail": "念心小站 · 2026-10-27 · 播放 4478 · 弹幕 0 · 评论 24 · 点赞 229 · 收藏 528 · 投币 65 · 分享 31",
       "id": "BV1UFxM6vEpj",
       "reading": "转写全片 1 分钟，474 字",
-      "excerpt": "真是越来越理谱了国产安卓手机自带的系统广告现在居然在电脑上点几下鼠标就能直接清空了就是GitHub像这个刚开源就爆火的项目专门知各种国产系统的开屏广告费评热搜 垃圾资讯 被影响推送最狠的是它不需要root不用刷机 更不用解锁比亚完全不动 手机系统底层它的原理是直接动机广告组件就算系统更新也不会失效而且每一部都有记录随时…",
       "comment": "android-ad-cleaner项目不用root就能清理广告，挺方便的。"
     },
     {
@@ -59,7 +55,6 @@
       "detail": "量子位Daily · 2026-10-18 · 播放 2798 · 弹幕 2 · 评论 7 · 点赞 126 · 收藏 208 · 投币 19 · 分享 48",
       "id": "BV1RnJy6KEvh",
       "reading": "转写全片 1 分钟，435 字",
-      "excerpt": "给程老的一转你想理解的概念他就能造出一台能运行能交互的机器模型小刀机械手表机心大的火箭发动机甚至抽象的机缘机算法都能着定比如这套手表机心持轮会转摆轮会震动还能上发条调整运行速度让零件悬浮润杀细节而且整套模型不到两小时就能生成想理解ARUI有款存算法它能把抽象规则变成一支书架没本书代表一份数据拿起书就相当于访问数据书架码…",
       "comment": "Claude新Skill能快速生成机械表机芯模型，很神奇。"
     },
     {
@@ -69,7 +64,6 @@
       "detail": "星标 3155 · 复刻 267 · 关注 8 · Python · 2026-10-24 · 关掉国产安卓手机系统里的广告、热搜、资讯推荐和营销推送。不 root，可还原，支持 AI 智能体一键执行。",
       "id": "rddmwmddr/android-ad-cleaner",
       "reading": "README 6050 字，送进总结 2201 字",
-      "excerpt": "# 手机去广告 关掉国产安卓手机系统里的广告、热搜、资讯推荐和营销推送。 介绍页：**https://rddmwmddr.github.io/android-ad-cleaner/** ## 下载桌面客户端 插上手机，点几下按钮。不需要 Python，也不需要 AI 工具。 > **v0.2.5 · 2026-10-2…",
       "comment": "这个项目能一键清理国产安卓手机广告，不需要root，挺实用的。"
     },
     {
@@ -79,7 +73,6 @@
       "detail": "星标 21415 · 复刻 1735 · 关注 54 · JavaScript · 2026-10-08 · An agent skill for creating detailed, interactive isometric illustrations of rea",
       "id": "wheresryan22/anatomy",
       "reading": "README 22306 字，送进总结 2201 字",
-      "excerpt": "Anatomy A Claude skill that explains an idea by building it as a real, working object.Also runs in Antigravity, OpenCode, Codex and MiniMax Code.Crafted, intera…",
       "comment": "Anatomy技能能将抽象概念变成互动模型，解释技术概念很直观。"
     },
     {
@@ -89,7 +82,6 @@
       "detail": "星标 580 · 复刻 451 · 关注 3 · JavaScript · 2026-10-25 · One persona, many coding agents. Replace or inject system prompts across codex,",
       "id": "ZiChuanLan/agent-purge",
       "reading": "README 6922 字，送进总结 2201 字",
-      "excerpt": "# agent-purge [![npm](https://img.shields.io/npm/v/agent-purge)](https://www.npmjs.com/package/agent-purge) [![stars](https://img.shields.io/github/stars/ZiChua…",
       "comment": "agent-purge可以统一管理多个coding agent的系统提示词，方便切换。"
     },
     {
@@ -99,7 +91,6 @@
       "detail": "星标 3205 · 复刻 488 · 关注 19 · Python · 2026-10-17 · One 8 KB skill that replaces REA (Reverse Engineer Anything): plain CLI tools, n",
       "id": "aicodeking/leanrea",
       "reading": "README 6088 字，送进总结 2201 字",
-      "excerpt": "# leanrea **One 8 KB skill file that does what [REA](https://github.com/morluto/rea) does: no MCP server, no 207 tools, no setup.** REA (Reverse Engineer Anythi…",
       "comment": "leanrea技能简化了逆向工程流程，效率更高，成本更低。"
     }
   ],
@@ -151,8 +142,16 @@
     "04:15:25 写入 笔记/科技日览.md"
   ],
   "path": "笔记/科技日览.md",
-  "intro": "每天留下大约十条，范围是新兴科技、GitHub 项目和最近的新概念。视频按播放、弹幕、评论、点赞、收藏和发布时间一起排序，仓库按星标、复刻、关注和创建时间一起排序。有字幕就读字幕，没有字幕就听前 8 分钟并转成文字，仓库读 README。任根据读到的正文写总结和评论。搜索、留下、跳过和写评论都记在当天的留痕里。本人对话会读最新一份总结和评论。",
+  "intro": "每天留下大约十条，范围是新兴科技、GitHub 项目和最近的新概念。管理员可以写下想看的词，也可以指定一条哔哩哔哩视频和想问的问题。视频按播放、弹幕、评论、点赞、收藏和发布时间一起排序，仓库按星标、复刻、关注和创建时间一起排序。每条视频都听前 8 分钟，在本机把声音转成文字，仓库读 README。DeepSeek 根据读到的正文写总结，并针对每条正文写回应。搜索、留下、跳过和写回应都记在当天的留痕里。本人对话会读最新一份总结和回应。",
   "history": [
+    "2026-11-09 18:24",
+    "2026-11-09 17:54",
+    "2026-11-09 03:41",
+    "2026-11-08 21:01",
+    "2026-11-08 20:35",
+    "2026-11-08 19:38",
+    "2026-11-08 18:35",
+    "2026-11-08 03:35",
     "2026-10-28 04:15",
     "2026-10-27 03:49",
     "2026-10-27 03:46",
