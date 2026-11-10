@@ -65,7 +65,7 @@
     },
     {
       "id": 4,
-      "name": "版本比较",
+      "name": "字符串比较",
       "note": "先解析版本字符串，再按主版本、次版本、修订号、先行版和构建信息选出最大的原始字符串。",
       "problems": [
         {
@@ -122,6 +122,27 @@
           "complexity": "不同坐标数记为 m，m ≤ n。枚举有向边是 O(m²)，每次查找是常数时间。计数表占用 O(m) 空间。",
           "sources": "LeetCode 593. Valid Square 用四条相等的边和两条相等的对角线判定正方形，对角线的平方长度是边长平方的 2 倍。https://leetcode.com/problems/valid-square/\n本题标记数到 800，计数时改为枚举一条边并旋转 90 度补点。",
           "repo": "`agent/algorithms.py` 的 `count_square_frames` 返回选法数。上面四组例子与该函数的返回值一致。",
+          "status": "未掌握"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "图算法",
+      "note": "图算法",
+      "problems": [
+        {
+          "id": 7,
+          "name": "预算内的最小路线费用",
+          "asked_at": "2026-11-10 08:30",
+          "algorithm": "迪杰斯特拉最短路。优先队列按当前费用扩展城市",
+          "summary": "城市 1 到城市 n 的路线费用非负。用优先队列求出最短费用，这个费用小于或等于预算 w 时输出它，大于预算或到不了终点时输出 -1。",
+          "statement": "n 个城市、m 条有向路线，每条路线是 u→v 和一条费用。起点是城市 1，终点是城市 n。费用和预算 w 都是 0 到 1000000000 的整数。累计费用按 64 位整数计算。最短费用小于或等于 w 时输出该费用，大于 w 或终点不可达时输出 -1。函数 minimum_route_cost(n, routes, w) 接收城市数、路线列表 (u, v, 费用) 和预算。",
+          "thinking": "先看费用非负，再确定用迪杰斯特拉算法，最后把终点费用和预算比较。\n\n1. 路线费用是非负整数，已经确定的最短费用在后续扩展中保持最小。优先队列每次取出费用最小的城市，这个城市第一次被取出时，费用就是从 1 到它的最短费用。\n2. 图用邻接表保存。best[1] = 0，其余城市先记为尚未到达。队列里放入 (0, 1)。\n3. 取出城市 u 和费用 d。队列里可能有同一城市的旧记录；取出的费用和 best[u] 不同时，这条记录已经过期，直接看下一条。\n4. 沿 u 的每条出边 u→v，候选费用是 d 加上这条边的费用。候选费用更小，或 v 尚未到达时，更新 best[v] 并把 (候选费用, v) 放入队列。\n5. 城市 n 第一次被取出时就可以停止。best[n] 小于或等于 w 时返回 best[n]。best[n] 大于 w，或扫描结束后 n 仍未到达，返回 -1。\n6. 单条费用最大是 1000000000。多条相加会超过 2147483647，累计费用用 64 位整数。\n\n```\ndef minimum_route_cost(city_count: int, routes: list[tuple[int, int, int]], budget: int) -> int:\n    \"\"\"返回城市 1 到城市 n 的最短费用。最短费用大于预算，或终点不可达时，返回 -1。\"\"\"\n    graph: list[list[tuple[int, int]]] = [[] for _ in range(city_count + 1)]\n    for start, end, cost in routes:\n        graph[start].append((end, cost))\n    best: list[int | None] = [None] * (city_count + 1)\n    best[1] = 0\n    pending = [(0, 1)]\n    while pending:\n        cost, city = heapq.heappop(pending)\n        if best[city] != cost:\n            continue\n        if city == city_count:\n            break\n        for nxt, edge in graph[city]:\n            candidate = cost + edge\n            if best[nxt] is None or candidate < best[nxt]:\n                best[nxt] = candidate\n                heapq.heappush(pending, (candidate, nxt))\n    answer = best[city_count]\n    if answer is None or answer > budget:\n        return -1\n    return answer\n```",
+          "example": "```text\n输入\nn = 4\nw = 3\n1 2 2\n2 3 2\n2 4 1\n1 3 5\n3 4 3\n1 4 4\n\n输出\n3\n```\n\n1→2→4 的费用是 2+1=3。1→4 的费用是 4。3 小于或等于预算 3，输出 3。预算改成 2 时，最短费用 3 大于预算，输出 -1。\n\n```text\n输入\nn = 3\nw = 100\n1 2 1\n\n输出\n-1\n```\n\n路线只从 1 指向 2。城市 3 没有进入的路线，终点不可达，输出 -1。\n\n```text\n输入\nn = 4\nw = 3000000000\n1 2 1000000000\n2 3 1000000000\n3 4 1000000000\n\n输出\n3000000000\n```\n\n唯一通路的费用是 3000000000，等于预算，输出这个费用。它大于 2147483647，需要 64 位整数。",
+          "complexity": "城市数 n、路线数 m。每条路线最多对应一次入队，优先队列的单次操作是 O(log n)。时间复杂度是 O((n+m) log n)。邻接表和费用表占用 O(n+m) 空间。",
+          "sources": "洛谷 P4779【模板】单源最短路径（弱化版）的第一组数据。终点取城市 n 时，最短费用是 3。https://www.luogu.com.cn/problem/P4779\n戴克斯特拉算法适用于非负边权的单源最短路。https://zh.wikipedia.org/wiki/戴克斯特拉算法",
+          "repo": "`agent/algorithms.py` 的 `minimum_route_cost` 返回最短费用或 -1。上面三组例子与该函数的返回值一致。",
           "status": "未掌握"
         }
       ]
