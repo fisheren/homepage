@@ -1,0 +1,1 @@
+import{H as e,V as t,Y as n,st as r}from"./index-CpWFeHrr.js";var i={key:0,class:`load-state is-error`,role:`alert`},a={key:1,class:`load-state`},o={__name:`LoadState`,props:{loading:{type:Boolean,default:!1},error:{type:String,default:``}},setup(o){return(s,c)=>o.error?(n(),e(`p`,i,r(o.error),1)):o.loading?(n(),e(`p`,a,`正在读取。`)):t(``,!0)}};export{o as t};
