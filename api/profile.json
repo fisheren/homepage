@@ -47,10 +47,10 @@
         },
         {
           "id": 4,
-          "title": "学位等级",
+          "title": "学位评级",
           "subtitle": "Distinction",
           "period": "",
-          "body": "格拉斯哥大学"
+          "body": "前10%"
         },
         {
           "id": 5,
@@ -204,9 +204,9 @@
         {
           "id": 29,
           "title": "个人智能体网站",
-          "subtitle": "Django · Vue · 智能体",
-          "period": "",
-          "body": "从头搭建的个人智能体应用。网站用 Django 和 Vue 做成，内容存在 SQLite。后台可以发布简历、学习历程、知识库、算法习题和科技日览；对话页可以使用规则大脑、Cursor 或 DeepSeek。公开阅读页：[https://fisheren.github.io/homepage/](https://fisheren.github.io/homepage/)"
+          "subtitle": "Django · Vue · LangChain",
+          "period": "2026.10 - 至今",
+          "body": "- 使用 Django 和 Vue 搭建个人网站，内容存在 SQLite。后台可以发布、修改和删除基本条目, 保存后导出到 Markdown。\n- 智能体对话登录后按账号保存多段会话。可调用检索笔记和读取网站内容等工具。大脑可以选用无大模型、Cursor 或 DeepSeek。检索 和 模型决定 使用 LangChain框架。\n- 知识库按主题阅读，支持Markdown格式。科技日览绑定B站账号,检索B站视频，听前 8 分钟后写成当天总结, 并可以收集喜好。开发难点收集技术提问并按主题展示。本人对话按本人说明回答，并用录音读出来。\n- 任一阅读页可以从悬浮窗打开AI助手，选中文字后可提问。公开阅读页：[https://fisheren.github.io/homepage/](https://fisheren.github.io/homepage/) 。"
         }
       ]
     },

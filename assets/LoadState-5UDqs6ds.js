@@ -1,0 +1,1 @@
+import{U as e,W as t,Z as n,lt as r}from"./index-D_bvZ_De.js";var i={key:0,class:`load-state is-error`,role:`alert`},a={key:1,class:`load-state`},o={__name:`LoadState`,props:{loading:{type:Boolean,default:!1},error:{type:String,default:``}},setup(o){return(s,c)=>o.error?(n(),t(`p`,i,r(o.error),1)):o.loading?(n(),t(`p`,a,`正在读取。`)):e(``,!0)}};export{o as t};
